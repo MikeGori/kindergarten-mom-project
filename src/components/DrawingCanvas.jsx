@@ -264,7 +264,8 @@ export default function DrawingCanvas({ onSave }) {
         onTouchEnd={stopDrawing}
         style={{
           width: '100%',
-          height: '400px',
+          aspectRatio: '3 / 2',
+          height: 'auto',
           background: 'white',
           borderRadius: '24px',
           cursor: tool === 'fill' ? 'url(https://cdn-icons-png.flaticon.com/32/14/14109.png) 0 32, crosshair' : 'crosshair',
