@@ -157,19 +157,19 @@ export default function App() {
   return (
     <div className="app-container" dir="rtl">
       {showNavbar && (
-        <header className="app-header animate-pop" style={{ position: 'sticky', top: 0, zIndex: 1000, margin: '1rem', borderRadius: '16px' }}>
-           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-             <div className="avatar-small" style={{ background: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)', padding: '0.8rem' }}>
-               {userRole === 'staff' ? <GraduationCap size={28} color="white" /> : <Baby size={28} color="white" />}
+        <header className="app-header animate-pop" style={{ position: 'sticky', top: 0, zIndex: 1000, margin: '0.5rem 1rem', borderRadius: '12px', padding: '0.5rem 1.5rem' }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+             <div className="avatar-small" style={{ background: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)', padding: '0.5rem', width: '40px', height: '40px', borderRadius: '12px' }}>
+               {userRole === 'staff' ? <GraduationCap size={20} color="white" /> : <Baby size={20} color="white" />}
              </div>
              <div style={{ textAlign: 'right' }}>
-               <h2 style={{ fontSize: '1.4rem', margin: 0, fontWeight: 800 }}>{schoolName}</h2>
-               <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', margin: 0, fontWeight: 600 }}>
+               <h2 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 800 }}>{schoolName}</h2>
+               <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: 0, fontWeight: 600 }}>
                  שלום, <span style={{ color: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)' }}>{userRole === 'staff' ? teacherName : activeKid?.name}</span>
                </p>
              </div>
            </div>
-           <button onClick={handleExit} className="giant-button" style={{ width: 'auto', padding: '0.8rem 1.5rem', fontSize: '1.1rem', background: 'hsla(1, 83%, 63%, 0.1)', color: 'var(--primary-red)', border: 'none' }}>
+           <button onClick={handleExit} className="giant-button" style={{ width: 'auto', height: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'hsla(1, 83%, 63%, 0.1)', color: 'var(--primary-red)', border: 'none', borderRadius: '10px' }}>
              יציאה 🚪
            </button>
         </header>

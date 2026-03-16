@@ -72,7 +72,7 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
   };
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', paddingBottom: '8rem' }}>
+    <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '8rem' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>הצג וספר</h1>
 
       {/* Creation Tools */}
@@ -122,7 +122,7 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
       {loading ? (
         <div style={{ textAlign: 'center', padding: '4rem' }}>טוען חברים...</div>
       ) : (
-        <div className="grid-container" style={{ gap: '2rem' }}>
+        <div className="grid-container" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem', alignItems: 'start' }}>
           {posts.map(post => (
             <div key={post.id} className="card animate-pop" style={{ borderTop: `12px solid ${post.color}`, padding: '1.5rem', position: 'relative' }}>
               
@@ -163,10 +163,12 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
                   borderRadius: '24px', 
                   marginBottom: '1rem',
                   display: 'flex',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  minHeight: post.type === 'emoji' ? '150px' : 'auto'
               }}>
-                {post.type === 'emoji' && <span style={{ fontSize: '6rem' }}>{post.content}</span>}
-                {post.type === 'draw' && <img src={post.content} alt="Drawing" style={{ maxWidth: '100%', borderRadius: '16px' }} />}
+                {post.type === 'emoji' && <span style={{ fontSize: '5rem' }}>{post.content}</span>}
+                {post.type === 'draw' && <img src={post.content} alt="Drawing" style={{ width: '100%', height: 'auto', borderRadius: '16px', objectFit: 'contain' }} />}
                 {post.type === 'audio' && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
                         <button className="giant-button" style={{ width: '60px', height: '60px', background: 'var(--primary-blue)' }} aria-label="הפעל הודעה קולית" onClick={() => {
