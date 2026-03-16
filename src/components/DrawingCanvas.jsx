@@ -27,7 +27,7 @@ export default function DrawingCanvas({ onSave }) {
     ctx.lineWidth = brushSize;
   }, [color, brushSize]);
   
-  // Convert HEX or CSS var to RGBA for flood fill
+    // Convert HEX or CSS var to RGBA for flood fill
   const getRgba = (cssColor) => {
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = 1; tempCanvas.height = 1;
@@ -40,6 +40,30 @@ export default function DrawingCanvas({ onSave }) {
       }
       tCtx.fillRect(0,0,1,1);
       return tCtx.getImageData(0,0,1,1).data;
+  };
+
+  const getCoordinates = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    let clientX, clientY;
+    
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+    }
+    
+    return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+    };
   };
 
   const floodFill = (ctx, startX, startY, cssColor) => {
@@ -93,18 +117,18 @@ export default function DrawingCanvas({ onSave }) {
   };
 
   const startDrawing = (e) => {
-    const { offsetX, offsetY } = e.nativeEvent;
+    const { x, y } = getCoordinates(e.nativeEvent || e);
     const ctx = canvasRef.current.getContext('2d');
     
     if (tool === 'fill') {
-        floodFill(ctx, offsetX, offsetY, color);
+        floodFill(ctx, x, y, color);
         return;
     }
     
     ctx.beginPath();
-    ctx.moveTo(offsetX, offsetY);
+    ctx.moveTo(x, y);
     setIsDrawing(true);
-    setStartPos({ x: offsetX, y: offsetY });
+    setStartPos({ x, y });
     
     if (tool !== 'brush') {
         setSnapshot(ctx.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height));
@@ -113,24 +137,24 @@ export default function DrawingCanvas({ onSave }) {
 
   const draw = (e) => {
     if (!isDrawing) return;
-    const { offsetX, offsetY } = e.nativeEvent;
+    const { x, y } = getCoordinates(e.nativeEvent || e);
     const ctx = canvasRef.current.getContext('2d');
     
     if (tool === 'brush') {
-        ctx.lineTo(offsetX, offsetY);
+        ctx.lineTo(x, y);
         ctx.stroke();
     } else if (tool === 'rect' || tool === 'circle') {
         if (!snapshot) return;
         ctx.putImageData(snapshot, 0, 0);
         ctx.beginPath();
         if (tool === 'rect') {
-            const w = offsetX - startPos.x;
-            const h = offsetY - startPos.y;
+            const w = x - startPos.x;
+            const h = y - startPos.y;
             ctx.strokeRect(startPos.x, startPos.y, w, h);
             ctx.fillStyle = ctx.strokeStyle;
             ctx.fillRect(startPos.x, startPos.y, w, h);
         } else if (tool === 'circle') {
-            const radius = Math.sqrt(Math.pow(startPos.x - offsetX, 2) + Math.pow(startPos.y - offsetY, 2));
+            const radius = Math.sqrt(Math.pow(startPos.x - x, 2) + Math.pow(startPos.y - y, 2));
             ctx.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
             ctx.fillStyle = ctx.strokeStyle;
             ctx.fill();
@@ -235,8 +259,8 @@ export default function DrawingCanvas({ onSave }) {
         onMouseMove={draw}
         onMouseUp={stopDrawing}
         onMouseLeave={stopDrawing}
-        onTouchStart={(e) => { e.preventDefault(); startDrawing({ nativeEvent: { offsetX: e.touches[0].clientX - canvasRef.current.getBoundingClientRect().left, offsetY: e.touches[0].clientY - canvasRef.current.getBoundingClientRect().top }}); }}
-        onTouchMove={(e) => draw({ nativeEvent: { offsetX: e.touches[0].clientX - canvasRef.current.getBoundingClientRect().left, offsetY: e.touches[0].clientY - canvasRef.current.getBoundingClientRect().top }})}
+        onTouchStart={(e) => { e.preventDefault(); startDrawing(e); }}
+        onTouchMove={(e) => draw(e)}
         onTouchEnd={stopDrawing}
         style={{
           width: '100%',

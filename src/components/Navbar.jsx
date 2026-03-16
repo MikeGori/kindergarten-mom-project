@@ -24,13 +24,13 @@ export default function Navbar({ currentView, setView, userRole }) {
       zIndex: 1000,
       display: 'flex',
       gap: '1rem',
-      padding: '0.75rem',
+      padding: '0.5rem',
       background: 'var(--glass-bg)',
       backdropFilter: 'blur(12px)',
       borderRadius: '2rem',
       border: '1px solid var(--glass-border)',
       boxShadow: 'var(--shadow-soft)',
-      maxWidth: 'min(90vw, 600px)',
+      maxWidth: 'min(90vw, 500px)',
       width: 'max-content'
     }}>
       {items.map((item) => {
@@ -43,26 +43,26 @@ export default function Navbar({ currentView, setView, userRole }) {
             onClick={() => setView(item.id)}
             style={{
               position: 'relative',
-              padding: '0 1rem',
-              height: 'var(--touch-target)',
-              borderRadius: '1.5rem',
+              padding: '0 0.5rem',
+              height: 'calc(var(--touch-target) * 0.75)',
+              borderRadius: '1.2rem',
               border: 'none',
               background: isActive ? item.color : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.25rem',
+              gap: '0.2rem',
               cursor: 'pointer',
               transition: 'var(--transition-bounce)',
-              transform: isActive ? 'scale(1.1) translateY(-8px)' : 'scale(1)',
+              transform: isActive ? 'scale(1.05) translateY(-5px)' : 'scale(1)',
               boxShadow: isActive ? `0 8px 20px ${item.color}44` : 'none',
-              minWidth: '70px'
+              minWidth: '60px'
             }}
             aria-label={item.label}
           >
             <Icon 
-              size={isActive ? 32 : 28} 
+              size={isActive ? 24 : 20} 
               color={isActive ? 'white' : 'var(--text-muted)'} 
               strokeWidth={isActive ? 2.5 : 2}
             />
