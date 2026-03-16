@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper: Is the user a staff member?
+    function isStaff() {
+      return request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'staff';
+    }
+
+    // Helper: Is the user logged in (even anonymously)?
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isStaff(); // Only staff can manage user accounts
+    }
+
+    // Posts
+    match /posts/{postId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']) ||
+        resource.data.authorId == request.auth.uid ||
+        isStaff()
+      );
+      allow delete: if isStaff() || resource.data.authorId == request.auth.uid;
+    }
+
+    // Attendance
+    match /attendance/{attendanceId} {
+      allow read: if isStaff();
+      allow write: if isSignedIn(); // Children can log their own attendance via the service
+    }
+
+    // Rewards
+    match /rewards/{rewardId} {
+      allow read: if isSignedIn();
+      allow write: if isStaff(); // Only staff can award rewards
+    }
+  }
+}
