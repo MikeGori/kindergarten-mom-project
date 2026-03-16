@@ -130,7 +130,7 @@ export default function DrawingCanvas({ onSave }) {
     setIsDrawing(true);
     setStartPos({ x, y });
     
-    if (tool !== 'brush') {
+    if (tool !== 'brush' && tool !== 'eraser') {
         setSnapshot(ctx.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height));
     }
   };
@@ -140,7 +140,7 @@ export default function DrawingCanvas({ onSave }) {
     const { x, y } = getCoordinates(e.nativeEvent || e);
     const ctx = canvasRef.current.getContext('2d');
     
-    if (tool === 'brush') {
+    if (tool === 'brush' || tool === 'eraser') {
         ctx.lineTo(x, y);
         ctx.stroke();
     } else if (tool === 'rect' || tool === 'circle') {
