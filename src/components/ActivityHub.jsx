@@ -23,7 +23,7 @@ export default function ActivityHub() {
   if (loading) return <div style={{ padding: '4rem', textAlign: 'center' }}>טוען פעילויות...</div>;
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', textAlign: 'right' }}>
+    <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', textAlign: 'right', paddingBottom: '8rem' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>מרכז הלמידה</h1>
 
       {activities.filter(a => a.type === 'video').map(activity => (

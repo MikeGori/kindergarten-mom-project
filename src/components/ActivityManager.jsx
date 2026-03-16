@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Video, FileText, Plus, Trash2, ToggleLeft, ToggleRight, Link, Image as ImageIcon } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { uploadMedia } from '../services/storage';
 
 export default function ActivityManager() {
   const [activities, setActivities] = useState([]);
@@ -82,6 +83,19 @@ export default function ActivityManager() {
     };
   };
 
+  const handlePdfUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSaving(true);
+    try {
+        const result = await uploadMedia(file, 'activities/pdfs');
+        setForm(f => ({ ...f, url: result.url, title: form.title || file.name }));
+    } catch (err) {
+        alert("שגיאה בהעלאת הקובץ: " + err.message);
+    }
+    setSaving(false);
+  };
+
   const handleDelete = async (id) => {
     try {
         await deleteDoc(doc(db, 'activities', id));
@@ -160,7 +174,7 @@ export default function ActivityManager() {
               required
             />
 
-            {form.type !== 'image' ? (
+            {form.type === 'link' || form.type === 'video' ? (
                 <input
                   type="url"
                   placeholder="קישור (https://...)"
@@ -169,7 +183,7 @@ export default function ActivityManager() {
                   style={{ padding: '1rem', borderRadius: '12px', border: '2px solid var(--glass-border)', fontSize: '1.1rem', outline: 'none' }}
                   required
                 />
-            ) : (
+            ) : form.type === 'image' ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <input
                       type="file"
@@ -179,6 +193,18 @@ export default function ActivityManager() {
                       required={!form.url}
                     />
                     {form.url && <img src={form.url} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '12px', objectFit: 'contain' }} />}
+                </div>
+            ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handlePdfUpload}
+                      disabled={saving}
+                      style={{ padding: '1rem', borderRadius: '12px', border: '2px dashed var(--primary-blue)', fontSize: '1.1rem', outline: 'none', background: 'white' }}
+                      required={!form.url}
+                    />
+                    {form.url && <p style={{ color: 'var(--primary-green)', fontWeight: 'bold' }}>✓ ה-PDF מוכן לשמירה</p>}
                 </div>
             )}
 
