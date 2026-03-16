@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Video, FileText, Plus, Trash2, ToggleLeft, ToggleRight, Link } from 'lucide-react';
+import { Video, FileText, Plus, Trash2, ToggleLeft, ToggleRight, Link, Image as ImageIcon } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 
@@ -42,6 +42,44 @@ export default function ActivityManager() {
       alert('שגיאה בהוספה. בדקו את החיבור.');
     }
     setSaving(false);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 800; // Resize to max 800px to ensure it fits in Firestore (1MB limit)
+
+        if (width > height) {
+          if (width > maxDim) {
+            height *= maxDim / width;
+            width = maxDim;
+          }
+        } else {
+          if (height > maxDim) {
+            width *= maxDim / height;
+            height = maxDim;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Compress to JPEG to save space
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        setForm(f => ({ ...f, url: dataUrl }));
+      };
+    };
   };
 
   const handleDelete = async (id) => {
@@ -91,6 +129,7 @@ export default function ActivityManager() {
             <div style={{ display: 'flex', gap: '1rem' }}>
               {[
                 { value: 'video', icon: Video, label: 'סרטון YouTube' },
+                { value: 'image', icon: ImageIcon, label: 'תמונה / צילום' },
                 { value: 'pdf', icon: FileText, label: 'קישור PDF' },
                 { value: 'link', icon: Link, label: 'קישור כללי' },
               ].map(({ value, icon: Icon, label }) => (
@@ -121,14 +160,27 @@ export default function ActivityManager() {
               required
             />
 
-            <input
-              type="url"
-              placeholder="קישור (https://...)"
-              value={form.url}
-              onChange={e => setForm(f => ({ ...f, url: e.target.value }))}
-              style={{ padding: '1rem', borderRadius: '12px', border: '2px solid var(--glass-border)', fontSize: '1.1rem', outline: 'none' }}
-              required
-            />
+            {form.type !== 'image' ? (
+                <input
+                  type="url"
+                  placeholder="קישור (https://...)"
+                  value={form.url}
+                  onChange={e => setForm(f => ({ ...f, url: e.target.value }))}
+                  style={{ padding: '1rem', borderRadius: '12px', border: '2px solid var(--glass-border)', fontSize: '1.1rem', outline: 'none' }}
+                  required
+                />
+            ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      style={{ padding: '1rem', borderRadius: '12px', border: '2px dashed var(--primary-blue)', fontSize: '1.1rem', outline: 'none', background: 'white' }}
+                      required={!form.url}
+                    />
+                    {form.url && <img src={form.url} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '12px', objectFit: 'contain' }} />}
+                </div>
+            )}
 
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button
@@ -167,6 +219,7 @@ export default function ActivityManager() {
         {activities.map(activity => {
           const typeInfo = {
             video: { icon: Video, color: 'var(--primary-red)', bg: '#ffebee', label: 'סרטון' },
+            image: { icon: ImageIcon, color: 'var(--primary-purple)', bg: '#f3e5f5', label: 'תמונה' },
             pdf: { icon: FileText, color: 'var(--primary-blue)', bg: '#e3f2fd', label: 'PDF' },
             link: { icon: Link, color: 'var(--primary-green)', bg: '#e8f5e9', label: 'קישור' },
           }[activity.type] || { icon: Link, color: 'var(--text-muted)', bg: '#f5f5f5', label: activity.type };
@@ -190,10 +243,14 @@ export default function ActivityManager() {
                     borderRadius: '99px', background: typeInfo.bg, color: typeInfo.color
                   }}>{typeInfo.label}</span>
                 </div>
-                <a href={activity.url} target="_blank" rel="noreferrer"
-                  style={{ color: 'var(--text-muted)', fontSize: '0.9rem', textDecoration: 'none', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {activity.url}
-                </a>
+                {activity.type === 'image' ? (
+                  <img src={activity.url} alt={activity.title} style={{ height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
+                ) : (
+                  <a href={activity.url} target="_blank" rel="noreferrer"
+                    style={{ color: 'var(--text-muted)', fontSize: '0.9rem', textDecoration: 'none', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {activity.url}
+                  </a>
+                )}
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, FileText, CheckCircle, Video, ExternalLink } from 'lucide-react';
+import { Play, FileText, CheckCircle, Video, ExternalLink, Image as ImageIcon } from 'lucide-react';
 import '../index.css';
 import { db } from '../lib/firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
@@ -51,17 +51,28 @@ export default function ActivityHub() {
       <div className="grid-container" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
         {activities.filter(a => a.type !== 'video').map(activity => (
           <div key={activity.id} className="card animate-pop" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-            <div style={{ width: '100%', height: '150px', background: '#e8f5e9', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {activity.type === 'pdf' ? <FileText size={64} color="var(--primary-blue)" /> : <div style={{ border: '4px dashed var(--primary-green)', width: '80px', height: '80px', borderRadius: '50%' }}></div>}
+            <div style={{ width: '100%', height: '150px', background: activity.type === 'image' ? '#f3e5f5' : '#e8f5e9', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                {activity.type === 'pdf' ? <FileText size={64} color="var(--primary-blue)" /> : 
+                 activity.type === 'image' ? <img src={activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
+                 <div style={{ border: '4px dashed var(--primary-green)', width: '80px', height: '80px', borderRadius: '50%' }}></div>}
             </div>
             <h3>{activity.title}</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', marginTop: '0.5rem' }}>לחצו כדי להתחיל</p>
-            <button 
-                onClick={() => window.open(activity.url, '_blank')}
-                style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-green)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-            >
-              בואו נשחק <ExternalLink size={20} />
-            </button>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', marginTop: '0.5rem' }}>{activity.type === 'image' ? 'תמונה מהמורה' : 'לחצו כדי להתחיל'}</p>
+            {activity.type === 'image' ? (
+                <button 
+                  onClick={() => window.open(activity.url, '_blank')}
+                  style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-purple)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                >
+                  הגדל תמונה <ImageIcon size={20} />
+                </button>
+            ) : (
+                <button 
+                    onClick={() => window.open(activity.url, '_blank')}
+                    style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-green)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                >
+                  בואו נשחק <ExternalLink size={20} />
+                </button>
+            )}
           </div>
         ))}
 
