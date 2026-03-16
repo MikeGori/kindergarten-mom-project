@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "npx vite",
+    "build": "npx vite build",
+    "preview": "npx vite preview",
+    "postinstall": "chmod +x node_modules/.bin/* || true",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "cy:open": "cypress open",
