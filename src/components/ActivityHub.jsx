@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, FileText, CheckCircle, Video, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { Play, FileText, CheckCircle, Video, ExternalLink, Image as ImageIcon, Gamepad2, Music, Palette, BookOpen, Rocket, Star, Heart, Smile, Sun } from 'lucide-react';
 import '../index.css';
 import { db } from '../lib/firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
@@ -27,55 +27,66 @@ export default function ActivityHub() {
     <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', textAlign: 'right', paddingBottom: '8rem' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>מרכז הלמידה</h1>
 
-      {activities.filter(a => a.type === 'video').map(activity => (
-        <div key={activity.id} className="card animate-pop" style={{ marginBottom: '3rem', background: '#ffebee' }}>
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary-red)' }}>
-            <Video size={32} /> {activity.title}
+      {activities.filter(a => a.type === 'video').map(activity => {
+        const iconMap = { Gamepad2, Music, Palette, BookOpen, Rocket, Star, Heart, Smile, Sun, Video, ImageIcon, FileText, Link: ExternalLink };
+        const TypeIcon = iconMap[activity.icon] || Video;
+        const displayColor = activity.color || 'var(--primary-red)';
+
+        return (
+        <div key={activity.id} className="card animate-pop" style={{ marginBottom: '3rem', background: '#fafafa', border: `3px solid ${displayColor}` }}>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: displayColor }}>
+            <TypeIcon size={32} /> {activity.title}
           </h2>
-          <div style={{ width: '100%', height: '300px', background: 'black', borderRadius: '24px', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(45deg, var(--primary-blue), var(--primary-green))', opacity: 0.8 }}></div>
+          <div style={{ width: '100%', height: '300px', background: 'black', borderRadius: '24px', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', boxShadow: `0 10px 30px ${displayColor}40` }}>
+            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(45deg, ${displayColor}, var(--primary-blue))`, opacity: 0.8 }}></div>
             <button 
               className="giant-button" 
-              style={{ zIndex: 10, width: '100px', height: '100px', borderRadius: '50%', background: 'white' }}
+              style={{ zIndex: 10, width: '100px', height: '100px', borderRadius: '50%', background: 'white', border: `4px solid ${displayColor}` }}
               onClick={() => window.open(activity.url, '_blank')}
             >
-              <Play size={48} color="var(--primary-red)" style={{ marginRight: '8px' }} />
+              <Play size={44} color={displayColor} style={{ marginLeft: '6px' }} />
             </button>
           </div>
         </div>
-      ))}
+        );
+      })}
 
       <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', color: 'var(--text-main)' }}>
         <FileText size={32} color="var(--primary-blue)" /> הפעילויות של היום
       </h2>
 
       <div className="grid-container" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
-        {activities.filter(a => a.type !== 'video').map(activity => (
-          <div key={activity.id} className="card animate-pop" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-            <div style={{ width: '100%', height: '150px', background: activity.type === 'image' ? '#f3e5f5' : '#e8f5e9', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                {activity.type === 'pdf' ? <FileText size={64} color="var(--primary-blue)" /> : 
-                 activity.type === 'image' ? <img src={activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
-                 <div style={{ border: '4px dashed var(--primary-green)', width: '80px', height: '80px', borderRadius: '50%' }}></div>}
+        {activities.filter(a => a.type !== 'video').map(activity => {
+          const iconMap = { Gamepad2, Music, Palette, BookOpen, Rocket, Star, Heart, Smile, Sun, Video, ImageIcon, FileText, Link: ExternalLink };
+          const TypeIcon = iconMap[activity.icon] || iconMap[activity.type === 'image' ? 'ImageIcon' : activity.type === 'pdf' ? 'FileText' : 'Link'] || Star;
+          const displayColor = activity.color || 'var(--primary-green)';
+
+          return (
+          <div key={activity.id} className="card animate-pop" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', borderTop: `8px solid ${displayColor}` }}>
+            <div style={{ width: '100%', height: '150px', background: activity.type === 'image' ? '#f3e5f5' : '#fafafa', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                {activity.type === 'image' ? <img src={activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
+                 <TypeIcon size={72} color={displayColor} />}
             </div>
-            <h3>{activity.title}</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', marginTop: '0.5rem' }}>{activity.type === 'image' ? 'תמונה מהמורה' : 'לחצו כדי להתחיל'}</p>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0 }}>{activity.title}</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', marginTop: '0.5rem', fontWeight: 600 }}>{activity.type === 'image' ? 'תמונה מהמורה' : 'לחצו כדי להתחיל'}</p>
             {activity.type === 'image' ? (
                 <button 
                   onClick={() => setSelectedImage(activity.url)}
-                  style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-purple)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                  style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-purple)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 8px 20px hsla(262, 70%, 68%, 0.3)' }}
                 >
                   הגדל תמונה <ImageIcon size={20} />
                 </button>
             ) : (
                 <button 
                     onClick={() => window.open(activity.url, '_blank')}
-                    style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-green)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                    style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: displayColor, color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: `0 8px 20px ${displayColor}66` }}
                 >
                   בואו נשחק <ExternalLink size={20} />
                 </button>
             )}
           </div>
-        ))}
+          );
+        })}
 
         {activities.length === 0 && (
             <div className="card" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem' }}>
