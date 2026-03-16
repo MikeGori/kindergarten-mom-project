@@ -1,26 +1,193 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import VisualLogin from './components/VisualLogin';
 import TeacherDashboard from './components/TeacherDashboard';
 import ShowAndTell from './components/ShowAndTell';
 import ActivityHub from './components/ActivityHub';
+import StaffLogin from './components/StaffLogin'; // Keeping this import as it was in the original, though the new landing page logic doesn't use it directly.
+import ActivityManager from './components/ActivityManager';
+import { getSchoolSettings, db } from './lib/firebase'; // Assuming db is exported from firebase.js
+import { onSnapshot, doc } from 'firebase/firestore';
+import { Users, Baby, GraduationCap } from 'lucide-react'; // Added GraduationCap
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('login'); // 'login', 'dashboard', 'feed', 'learning'
+  const [currentView, setCurrentView] = useState('landing');
+  const [userRole, setUserRole] = useState(null); // 'staff', 'student'
+  const [schoolName, setSchoolName] = useState('הגן שלנו');
+  const [teacherName, setTeacherName] = useState('המורה');
+  const [activeKid, setActiveKid] = useState(null);
+  
+  // Security & Landing states
+  const [staffPassInput, setStaffPassInput] = useState('');
+  const [isStaffLogining, setIsStaffLogining] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, 'settings', 'school'), (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        setSchoolName(data.name || 'הגן שלנו');
+        setTeacherName(data.teacherName || 'המורה');
+      }
+    });
+    return unsub;
+  }, []);
+
+  const handleStaffLogin = () => {
+    if (staffPassInput === 'Argaman') {
+        setUserRole('staff');
+        setCurrentView('dashboard');
+        setIsStaffLogining(false);
+        setStaffPassInput('');
+        setError('');
+    } else {
+        setError('סיסמה לא נכונה. נסו שוב!');
+        setStaffPassInput('');
+    }
+  };
+
+  const handleExit = () => {
+    setActiveKid(null);
+    setUserRole(null);
+    setCurrentView('landing');
+    setIsStaffLogining(false);
+    setStaffPassInput('');
+    setError('');
+  };
+
+  const renderView = () => {
+    switch(currentView) {
+      case 'dashboard':
+        return <TeacherDashboard />;
+      case 'learning':
+      case 'games': // alias for backwards compatibility
+        return <ActivityHub />;
+      case 'feed':
+      case 'friends': // alias
+        return <ShowAndTell userRole={userRole} userName={userRole === 'staff' ? teacherName : activeKid?.name} />;
+      case 'activity-manager':
+        return <ActivityManager />;
+      case 'login':
+        return <VisualLogin onLogin={(kid) => {
+          setActiveKid(kid);
+          setCurrentView('learning');
+        }} />;
+      default:
+         // If activeKid exists and currentView is not 'login', default to 'learning' (ActivityHub)
+        if (activeKid && userRole === 'student') {
+          return <ActivityHub />;
+        }
+        // For staff, if currentView is not recognized, default to dashboard
+        if (userRole === 'staff') {
+          return <TeacherDashboard />;
+        }
+        return <ActivityHub />; // Fallback
+    }
+  };
+
+  const showNavbar = (userRole === 'staff') || (userRole === 'student' && activeKid);
+
+  if (currentView === 'landing') {
+    return (
+        <div className="app-container" dir="rtl" style={{ background: 'linear-gradient(135deg, hsl(210, 100%, 98%) 0%, hsl(210, 100%, 92%) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem' }}>
+          <div style={{ maxWidth: '1100px', width: '100%', textAlign: 'center' }}>
+            <h1 className="animate-pop" style={{ fontSize: '4.5rem', color: 'var(--primary-blue)', marginBottom: '1rem', fontWeight: 900, textShadow: '2px 2px 4px rgba(0,0,0,0.05)' }}>
+              {schoolName} ✨
+            </h1>
+            <p style={{ fontSize: '1.6rem', color: 'var(--text-muted)', marginBottom: '5rem', fontWeight: 600 }}>ברוכים הבאים לעולם הלמידה שלנו!</p>
+            
+            <div className="grid-container" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '3rem' }}>
+                
+                {/* Student Entrance */}
+                {!isStaffLogining && (
+                  <button 
+                      className="card animate-pop landing-card" 
+                      onClick={() => { setUserRole('student'); setCurrentView('login'); }}
+                      style={{ padding: '4rem 2rem', cursor: 'pointer', border: 'none', background: 'white', position: 'relative', overflow: 'hidden' }}
+                  >
+                      <div style={{ background: 'hsla(122, 39%, 57%, 0.15)', padding: '2.5rem', borderRadius: '50%', width: '160px', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2.5rem' }}>
+                           <Baby size={80} color="var(--primary-green)" />
+                      </div>
+                      <h2 style={{ fontSize: '2.8rem', color: 'var(--primary-green)', marginBottom: '1rem' }}>כניסת ילדים</h2>
+                      <p style={{ fontSize: '1.3rem', color: 'var(--text-muted)', margin: 0, fontWeight: 600 }}>משחקים, יצירה וחברים</p>
+                  </button>
+                )}
+
+                {/* Staff Entrance */}
+                <div className="card animate-pop landing-card" style={{ padding: '4rem 2rem', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ background: 'hsla(207, 90%, 61%, 0.15)', padding: '2.5rem', borderRadius: '50%', width: '160px', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2.5rem' }}>
+                         <GraduationCap size={80} color="var(--primary-blue)" />
+                    </div>
+                    <h2 style={{ fontSize: '2.8rem', color: 'var(--primary-blue)', marginBottom: '1.5rem' }}>כניסת צוות</h2>
+                    
+                    {isStaffLogining ? (
+                        <div style={{ width: '100%', animation: 'slideUp 0.4s ease' }}>
+                             <input 
+                                type="password" 
+                                placeholder="הזן סיסמת צוות" 
+                                value={staffPassInput}
+                                onChange={(e) => setStaffPassInput(e.target.value)}
+                                autoFocus
+                                onKeyDown={(e) => e.key === 'Enter' && handleStaffLogin()}
+                                style={{ width: '100%', padding: '1.2rem', borderRadius: '20px', border: '3px solid var(--primary-blue)', fontSize: '1.4rem', textAlign: 'center', marginBottom: '1.5rem', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}
+                             />
+                             {error && <p style={{ color: 'var(--primary-red)', fontWeight: 800, marginBottom: '1.5rem', fontSize: '1.1rem' }}>{error}</p>}
+                             <div style={{ display: 'flex', gap: '1.2rem', width: '100%' }}>
+                                <button className="giant-button" onClick={handleStaffLogin} style={{ flex: 1.5, fontSize: '1.3rem', padding: '1.2rem' }}>אישור ✅</button>
+                                <button className="giant-button" onClick={() => { setIsStaffLogining(false); setError(''); }} style={{ flex: 1, background: 'var(--bg-color)', color: 'var(--text-muted)', fontSize: '1.3rem', padding: '1.2rem' }}>ביטול</button>
+                             </div>
+                        </div>
+                    ) : (
+                        <button 
+                            className="giant-button" 
+                            onClick={() => setIsStaffLogining(true)}
+                            style={{ fontSize: '1.4rem', padding: '1.2rem 4rem' }}
+                        >
+                            כניסה למערכת
+                        </button>
+                    )}
+                </div>
+
+            </div>
+          </div>
+        </div>
+    );
+  }
 
   return (
-    <div style={{ paddingBottom: '8rem' }}>
-      <Navbar currentView={currentView} setView={setCurrentView} />
+    <div className="app-container" dir="rtl">
+      {showNavbar && (
+        <header className="app-header animate-pop">
+           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+             <div className="avatar-small" style={{ background: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)', padding: '0.8rem' }}>
+               {userRole === 'staff' ? <GraduationCap size={28} color="white" /> : <Baby size={28} color="white" />}
+             </div>
+             <div style={{ textAlign: 'right' }}>
+               <h2 style={{ fontSize: '1.4rem', margin: 0, fontWeight: 800 }}>{schoolName}</h2>
+               <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', margin: 0, fontWeight: 600 }}>
+                 שלום, <span style={{ color: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)' }}>{userRole === 'staff' ? teacherName : activeKid?.name}</span>
+               </p>
+             </div>
+           </div>
+           <button onClick={handleExit} className="giant-button" style={{ width: 'auto', padding: '0.8rem 1.5rem', fontSize: '1.1rem', background: 'hsla(1, 83%, 63%, 0.1)', color: 'var(--primary-red)', border: 'none' }}>
+             יציאה 🚪
+           </button>
+        </header>
+      )}
 
-      {/* Main Content Area */}
-      <main>
-        <div className="animate-pop">
-          {currentView === 'login' && <VisualLogin />}
-          {currentView === 'dashboard' && <TeacherDashboard />}
-          {currentView === 'feed' && <ShowAndTell userRole="student" userName="מיה" />}
-          {currentView === 'learning' && <ActivityHub />}
-        </div>
+      {showNavbar && <Navbar currentView={currentView} setView={setCurrentView} userRole={userRole} />}
+
+      <main style={{ marginTop: '1rem' }}>
+        {renderView()}
       </main>
+
+      {/* Floating Info for staff when in non-dashboard views */}
+      {userRole === 'staff' && currentView !== 'dashboard' && (
+          <div style={{ position: 'fixed', bottom: '6rem', left: '2rem', background: 'white', padding: '0.75rem 1.5rem', borderRadius: '30px', boxShadow: 'var(--shadow-soft)', display: 'flex', alignItems: 'center', gap: '0.5rem', border: '2px solid var(--primary-blue)', zIndex: 100 }}>
+              <Users size={20} color="var(--primary-blue)" />
+              <span style={{ fontWeight: 700 }}>מצב עריכה: {teacherName}</span>
+          </div>
+      )}
     </div>
   );
 }

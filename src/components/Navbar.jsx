@@ -1,14 +1,20 @@
 import React from 'react';
-import { LogIn, LayoutGrid, Users, MessageSquare } from 'lucide-react';
+import { LogIn, LayoutGrid, Users, MessageSquare, ClipboardList } from 'lucide-react';
 
-const navItems = [
-  { id: 'login', icon: LogIn, color: 'var(--primary-yellow)', label: 'כניסה' },
-  { id: 'learning', icon: LayoutGrid, color: 'var(--primary-blue)', label: 'משחקים' },
+const staffNav = [
+  { id: 'dashboard', icon: Users, color: 'var(--primary-purple)', label: 'דשבורד' },
+  { id: 'activity-manager', icon: ClipboardList, color: 'var(--primary-blue)', label: 'ניהול פעילויות' },
   { id: 'feed', icon: MessageSquare, color: 'var(--primary-green)', label: 'חברים' },
-  { id: 'dashboard', icon: Users, color: 'var(--primary-purple)', label: 'מורה' },
 ];
 
-export default function Navbar({ currentView, setView }) {
+const kidNav = [
+  { id: 'learning', icon: LayoutGrid, color: 'var(--primary-blue)', label: 'משחקים' },
+  { id: 'feed', icon: MessageSquare, color: 'var(--primary-green)', label: 'חברים' },
+];
+
+export default function Navbar({ currentView, setView, userRole }) {
+  const items = userRole === 'staff' ? staffNav : kidNav;
+
   return (
     <nav style={{
       position: 'fixed',
@@ -24,10 +30,10 @@ export default function Navbar({ currentView, setView }) {
       borderRadius: '2rem',
       border: '1px solid var(--glass-border)',
       boxShadow: 'var(--shadow-soft)',
-      maxWidth: 'min(90vw, 500px)',
+      maxWidth: 'min(90vw, 600px)',
       width: 'max-content'
     }}>
-      {navItems.map((item) => {
+      {items.map((item) => {
         const isActive = currentView === item.id;
         const Icon = item.icon;
         
@@ -37,7 +43,7 @@ export default function Navbar({ currentView, setView }) {
             onClick={() => setView(item.id)}
             style={{
               position: 'relative',
-              width: 'var(--touch-target)',
+              padding: '0 1rem',
               height: 'var(--touch-target)',
               borderRadius: '1.5rem',
               border: 'none',
@@ -51,6 +57,7 @@ export default function Navbar({ currentView, setView }) {
               transition: 'var(--transition-bounce)',
               transform: isActive ? 'scale(1.1) translateY(-8px)' : 'scale(1)',
               boxShadow: isActive ? `0 8px 20px ${item.color}44` : 'none',
+              minWidth: '70px'
             }}
             aria-label={item.label}
           >
@@ -59,15 +66,13 @@ export default function Navbar({ currentView, setView }) {
               color={isActive ? 'white' : 'var(--text-muted)'} 
               strokeWidth={isActive ? 2.5 : 2}
             />
-            {!isActive && (
-                <span style={{ 
-                    fontSize: '0.75rem', 
-                    fontWeight: 700, 
-                    color: 'var(--text-muted)' 
-                }}>
-                    {item.label}
-                </span>
-            )}
+            <span style={{ 
+                fontSize: '0.75rem', 
+                fontWeight: 700, 
+                color: isActive ? 'white' : 'var(--text-muted)'
+            }}>
+                {item.label}
+            </span>
           </button>
         );
       })}

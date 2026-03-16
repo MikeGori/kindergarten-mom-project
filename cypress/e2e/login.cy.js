@@ -5,19 +5,24 @@ describe('Child Login Flow', () => {
     // Check if on login page
     cy.contains('מי משחק היום?').should('be.visible');
 
-    // Click on ליאו
-    cy.get('[data-testid="child-button-1"]').click();
+    // Test Registration Flow
+    cy.get('[aria-label="תלמיד חדש? הצטרף אלינו"]').click();
+    cy.contains('ברוכים הבאים!').should('be.visible');
+    
+    const randomName = `ילד-${Math.floor(Math.random() * 1000)}`;
+    cy.get('input[placeholder="איך קוראים לך?"]').type(randomName);
+    cy.contains('הצטרפתי!').click();
 
-    // Check if on password step
+    // Verify back on login page and new student exists
+    cy.contains('מי משחק היום?').should('be.visible');
+    cy.contains(randomName).should('be.visible').click();
+
+    // Password step
     cy.contains('הסיסמה הסודית').should('be.visible');
-    cy.contains("התור של ליאו").should('be.visible');
-
-    // Select shape sequence
     cy.get('[data-testid="shape-button-circle"]').click();
     cy.get('[data-testid="shape-button-square"]').click();
 
-    // Success step check
-    cy.contains('הידד, ליאו!').should('be.visible');
-    cy.contains('הצלחת!').should('be.visible');
+    // Success step
+    cy.contains(`הידד, ${randomName}!`).should('be.visible');
   });
 });

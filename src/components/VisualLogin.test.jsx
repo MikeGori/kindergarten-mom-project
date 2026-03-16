@@ -1,34 +1,83 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import VisualLogin from './VisualLogin';
+import { onSnapshot, addDoc } from 'firebase/firestore';
 
-describe('VisualLogin Component', () => {
-  it('renders "מי משחק היום?" on initial step', () => {
+// Mock Firebase
+vi.mock('firebase/firestore', () => ({
+  getFirestore: vi.fn(),
+  collection: vi.fn(),
+  onSnapshot: vi.fn((col, callback) => {
+    // Simulate initial data
+    callback({
+      docs: [
+        { id: '1', data: () => ({ name: 'ליאו', icon: 'Cat', color: 'var(--primary-yellow)' }) }
+      ]
+    });
+    return vi.fn(); // Unsubscribe mock
+  }),
+  addDoc: vi.fn()
+}));
+
+vi.mock('../lib/firebase', () => ({
+  db: {}
+}));
+
+describe('VisualLogin Component (Firebase Version)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders loading state initially then shows "מי משחק היום?"', async () => {
     render(<VisualLogin />);
-    expect(screen.getByText(/מי משחק היום\?/i)).toBeDefined();
+    // Loading state is very brief because mock onSnapshot calls callback immediately
+    await waitFor(() => {
+        expect(screen.getByText(/מי משחק היום\?/i)).toBeDefined();
+    });
   });
 
   it('selects a child and moves to the secret password step', async () => {
     render(<VisualLogin />);
     
-    const leoButton = screen.getByTestId('child-button-1'); // ליאו
+    await waitFor(() => screen.getByLabelText(/בחר את ליאו/i));
+    const leoButton = screen.getByLabelText(/בחר את ליאו/i);
     fireEvent.click(leoButton);
 
     expect(screen.getByText(/הסיסמה הסודית/i)).toBeDefined();
     expect(screen.getByText(/התור של ליאו/i)).toBeDefined();
   });
 
+  it('navigates to registration step and calls addDoc on completion', async () => {
+    render(<VisualLogin />);
+    
+    await waitFor(() => screen.getByLabelText(/תלמיד חדש\? הצטרף אלינו/i));
+    fireEvent.click(screen.getByLabelText(/תלמיד חדש\? הצטרף אלינו/i));
+
+    expect(screen.getByText(/ברוכים הבאים!/i)).toBeDefined();
+    
+    const input = screen.getByPlaceholderText(/איך קוראים לך\?/i);
+    fireEvent.change(input, { target: { value: 'חדש' } });
+    
+    const submitBtn = screen.getByText(/הצטרפתי!/i);
+    fireEvent.click(submitBtn);
+
+    expect(addDoc).toHaveBeenCalled();
+  });
+
   it('allows entering a shape sequence and moves to success step', async () => {
     render(<VisualLogin />);
     
-    // Step 1: Select ליאו
-    fireEvent.click(screen.getByTestId('child-button-1'));
+    await waitFor(() => screen.getByLabelText(/בחר את ליאו/i));
+    fireEvent.click(screen.getByLabelText(/בחר את ליאו/i));
 
-    // Step 2: Click two shapes
+    // Wait for password step
+    await waitFor(() => screen.getByText(/הסיסמה הסודית/i));
+
+    // Click shapes (data-testids are still present in code)
     fireEvent.click(screen.getByTestId('shape-button-circle'));
     fireEvent.click(screen.getByTestId('shape-button-square'));
 
-    // Should move to Step 3 after tiny delay
+    // Should move to Step 3 after delay
     await waitFor(() => {
       expect(screen.getByText(/הידד, ליאו!/i)).toBeDefined();
     }, { timeout: 2000 });
