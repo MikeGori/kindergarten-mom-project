@@ -16,7 +16,11 @@ export default function AudioRecorder({ onSave }) {
       };
       mediaRecorder.current.onstop = () => {
         const audioBlob = new Blob(audioChunks.current, { type: 'audio/wav' });
-        setAudioUrl(URL.createObjectURL(audioBlob));
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          setAudioUrl(reader.result);
+        };
         audioChunks.current = [];
       };
       mediaRecorder.current.start();
@@ -79,7 +83,10 @@ export default function AudioRecorder({ onSave }) {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
           <h2>עבודה מצוינת!</h2>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <button className="giant-button" style={{ width: '80px', height: '80px', background: 'white' }}>
+            <button className="giant-button" style={{ width: '80px', height: '80px', background: 'white' }} onClick={() => {
+                const audio = new Audio(audioUrl);
+                audio.play();
+            }}>
               <Play size={32} color="var(--primary-blue)" />
             </button>
             <button className="giant-button" onClick={handleSend} style={{ width: '80px', height: '80px', background: 'var(--primary-green)' }}>

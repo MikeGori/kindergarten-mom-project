@@ -12,7 +12,14 @@ export default function DrawingCanvas({ onSave }) {
     const ctx = canvas.getContext('2d');
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = color;
+    
+    if (color.startsWith('var(')) {
+        const varName = color.slice(4, -1);
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    } else {
+        ctx.strokeStyle = color;
+    }
+    
     ctx.lineWidth = brushSize;
   }, [color, brushSize]);
 

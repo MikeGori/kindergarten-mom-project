@@ -163,7 +163,10 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
                 {post.type === 'draw' && <img src={post.content} alt="Drawing" style={{ maxWidth: '100%', borderRadius: '16px' }} />}
                 {post.type === 'audio' && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
-                        <button className="giant-button" style={{ width: '60px', height: '60px', background: 'var(--primary-blue)' }} aria-label="הפעל הודעה קולית">
+                        <button className="giant-button" style={{ width: '60px', height: '60px', background: 'var(--primary-blue)' }} aria-label="הפעל הודעה קולית" onClick={() => {
+                            const audio = new Audio(post.content);
+                            audio.play();
+                        }}>
                             <Play size={24} color="white" />
                         </button>
                         <span style={{ fontWeight: 700, color: 'var(--primary-blue)' }}>הודעה קולית</span>
