@@ -7,6 +7,7 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 export default function ActivityHub() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const q = query(collection(db, 'activities'), where('active', '==', true));
@@ -60,7 +61,7 @@ export default function ActivityHub() {
             <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', marginTop: '0.5rem' }}>{activity.type === 'image' ? 'תמונה מהמורה' : 'לחצו כדי להתחיל'}</p>
             {activity.type === 'image' ? (
                 <button 
-                  onClick={() => window.open(activity.url, '_blank')}
+                  onClick={() => setSelectedImage(activity.url)}
                   style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-purple)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
                 >
                   הגדל תמונה <ImageIcon size={20} />
@@ -82,6 +83,22 @@ export default function ActivityHub() {
             </div>
         )}
       </div>
+
+      {/* Fullscreen Image Modal */}
+      {selectedImage && (
+          <div 
+            onClick={() => setSelectedImage(null)}
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', cursor: 'zoom-out' }}
+          >
+              <img src={selectedImage} alt="Enlarged Activity" style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '16px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', objectFit: 'contain' }} />
+              <button 
+                onClick={() => setSelectedImage(null)}
+                style={{ position: 'absolute', top: '2rem', right: '2rem', background: 'white', border: 'none', width: '50px', height: '50px', borderRadius: '50%', fontSize: '1.5rem', fontWeight: 'bold', color: 'black', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                  ✕
+              </button>
+          </div>
+      )}
     </div>
   );
 }

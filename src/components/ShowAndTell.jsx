@@ -16,6 +16,12 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
     const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
     const unsub = onSnapshot(q, (snapshot) => {
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      // guarantee descending order mathematically by timestamps
+      data.sort((a, b) => {
+          const tA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt || 0);
+          const tB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt || 0);
+          return tB - tA;
+      });
       setPosts(data);
       setLoading(false);
     });
