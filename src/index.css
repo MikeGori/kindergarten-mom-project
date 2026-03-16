@@ -136,13 +136,11 @@ p {
 
 .app-header {
     background: white;
-    padding: 1.5rem 3rem;
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: var(--shadow-soft);
-    border-radius: 0 0 2rem 2rem;
-    margin-bottom: 2rem;
     border: 1px solid var(--glass-border);
     animation: slideDown 0.4s ease-out;
 }

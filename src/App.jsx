@@ -157,7 +157,7 @@ export default function App() {
   return (
     <div className="app-container" dir="rtl">
       {showNavbar && (
-        <header className="app-header animate-pop">
+        <header className="app-header animate-pop" style={{ position: 'sticky', top: 0, zIndex: 1000, margin: '1rem', borderRadius: '16px' }}>
            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
              <div className="avatar-small" style={{ background: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)', padding: '0.8rem' }}>
                {userRole === 'staff' ? <GraduationCap size={28} color="white" /> : <Baby size={28} color="white" />}
