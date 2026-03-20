@@ -89,11 +89,31 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה',
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                    <label className="giant-button" style={{ width: 'auto', padding: '1rem 2rem', background: 'var(--primary-yellow)', cursor: 'pointer', color: 'white' }}>
                      <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
-                         if(e.target.files && e.target.files[0]) {
-                            const reader = new FileReader();
-                            reader.onload = (ev) => addPost('picture', ev.target.result);
-                            reader.readAsDataURL(e.target.files[0]);
-                         }
+                         const file = e.target.files && e.target.files[0];
+                         if (!file) return;
+                         setLoading(true); // Optional: if we want to show loading, but addPost does it. Let's just do it fast.
+                         const reader = new FileReader();
+                         reader.onload = (ev) => {
+                             const img = new Image();
+                             img.onload = () => {
+                                 const canvas = document.createElement('canvas');
+                                 let width = img.width;
+                                 let height = img.height;
+                                 const maxDim = 800; // Resize to ensure it fits in Firestore <1MB
+                                 if (width > height) {
+                                     if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+                                 } else {
+                                     if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+                                 }
+                                 canvas.width = width; canvas.height = height;
+                                 const ctx = canvas.getContext('2d');
+                                 ctx.drawImage(img, 0, 0, width, height);
+                                 const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                                 addPost('picture', compressedDataUrl);
+                             };
+                             img.src = ev.target.result;
+                         };
+                         reader.readAsDataURL(file);
                      }} />
                      <ImageIcon size={48} style={{ marginLeft: '1rem' }} />
                      <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>בחר תמונה</span>
