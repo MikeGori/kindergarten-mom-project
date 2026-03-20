@@ -76,54 +76,16 @@ export default function Mascot() {
             <div style={{ zIndex: 10, flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', position: 'relative' }}>
                 <div style={{ width: 'clamp(250px, 55vh, 550px)', height: 'clamp(250px, 55vh, 550px)', animation: 'float 4s ease-in-out infinite', filter: 'drop-shadow(0 25px 35px rgba(0,0,0,0.4))' }}>
                     
-                    {/* Exquisite Transparent Die-Cut Sticker SVG Snail */}
-                    <svg 
-                        width="100%" 
-                        height="100%" 
-                        viewBox="0 0 350 250" 
-                        xmlns="http://www.w3.org/2000/svg"
-                        style={{ cursor: 'pointer', transition: 'transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}
+                    {/* Exquisite Transparent Die-Cut Sticker PNG Snail */}
+                    <img 
+                        src="/argaman-sticker.png" 
+                        alt="Argaman Snail Mascot" 
+                        draggable="false"
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: 'pointer', transition: 'transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}
                         onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.85) translateY(15px)'; e.currentTarget.parentElement.style.animationPlayState = 'paused'; }}
                         onMouseUp={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.parentElement.style.animationPlayState = 'running'; }}
                         onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.parentElement.style.animationPlayState = 'running'; }}
-                    >
-                      {/* Thick White Sticker Border Silhouette */}
-                      <path d="M 40 220 Q -20 220 10 100 Q 30 20 80 50 Q 90 20 150 20 Q 190 20 230 40 A 110 110 0 0 1 330 150 C 330 220 290 230 240 230 L 40 220 Z" fill="#ffffff" stroke="#ffffff" strokeWidth="20" strokeLinejoin="round" />
-                      
-                      {/* Body Tail/Foot */}
-                      <path d="M 50 200 Q 15 200 35 150 Q 50 110 70 120 Q 90 130 110 135 C 130 150 170 200 210 200 L 260 200 Q 290 200 290 180 Q 290 160 240 160 C 200 160 150 150 150 130" fill="#FFCF56" stroke="#E5A93A" strokeWidth="8" strokeLinecap="round" />
-                      
-                      <path d="M 152 143 C 145 145 130 145 110 135" fill="none" stroke="#E5A93A" strokeWidth="8" />
-
-                      {/* Antennae */}
-                      <path d="M 65 118 Q 50 80 40 50" fill="none" stroke="#E5A93A" strokeWidth="8" strokeLinecap="round" />
-                      <circle cx="40" cy="50" r="16" fill="#FFCF56" stroke="#E5A93A" strokeWidth="6" />
-                      <circle cx="40" cy="50" r="6" fill="#333" />
-                      <circle cx="43" cy="46" r="2.5" fill="#FFF" />
-
-                      <path d="M 90 118 Q 110 80 120 50" fill="none" stroke="#E5A93A" strokeWidth="8" strokeLinecap="round" />
-                      <circle cx="120" cy="50" r="16" fill="#FFCF56" stroke="#E5A93A" strokeWidth="6" />
-                      <circle cx="120" cy="50" r="6" fill="#333" />
-                      <circle cx="123" cy="46" r="2.5" fill="#FFF" />
-
-                      {/* Snail Face Blushes and Smile */}
-                      <circle cx="45" cy="140" r="10" fill="#FF9A76" opacity="0.6" />
-                      <circle cx="95" cy="140" r="10" fill="#FF9A76" opacity="0.6" />
-                      <path d="M 55 145 Q 70 170 85 145" fill="none" stroke="#D1871C" strokeWidth="5" strokeLinecap="round" />
-                      <path d="M 60 150 Q 70 162 80 150" fill="#FFF" opacity="0.8" />
-
-                      {/* Shell - Argamon Base */}
-                      <circle cx="180" cy="115" r="95" fill="#EF476F" stroke="#B02546" strokeWidth="12" />
-                      
-                      {/* Big Inner Swirl */}
-                      <path d="M 160 115 Q 120 115 120 75 Q 120 20 180 20 Q 250 20 270 95 Q 285 160 200 200 Q 140 210 140 210 " fill="none" stroke="#B02546" strokeWidth="12" strokeLinecap="round" />
-                      <path d="M 160 115 Q 120 115 120 75 Q 120 20 180 20 Q 250 20 270 95 Q 285 160 200 200 Q 140 210 140 210 " fill="none" stroke="#FF9F1C" strokeWidth="8" strokeLinecap="round" />
-                      
-                      {/* Shell Reflections */}
-                      <path d="M 152 40 A 50 50 0 1 0 250 110" fill="none" stroke="#FFF" strokeWidth="10" strokeLinecap="round" opacity="0.5" />
-                      <circle cx="230" cy="160" r="8" fill="#FFF" opacity="0.8" />
-                      <circle cx="115" cy="145" r="4" fill="#FFF" opacity="0.8" />
-                    </svg>
+                    />
 
                 </div>
             </div>
