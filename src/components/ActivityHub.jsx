@@ -101,7 +101,7 @@ export default function ActivityHub({ userRole, student }) {
 
         return (
         <div key={activity.id} className="card animate-pop" style={{ position: 'relative', marginBottom: '3rem', background: '#fafafa', border: `3px solid ${displayColor}` }}>
-          {userRole === 'teacher' && (
+          {userRole === 'staff' && (
              <button 
                 onClick={(e) => handleToggleRouting(activity, e)}
                 style={{ position: 'absolute', top: '10px', left: '10px', background: activity.requiresNewTab ? '#ffebee' : '#e8f5e9', color: activity.requiresNewTab ? 'var(--primary-red)' : 'var(--primary-green)', padding: '0.5rem 1rem', borderRadius: '12px', border: 'none', cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-soft)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
@@ -111,7 +111,7 @@ export default function ActivityHub({ userRole, student }) {
              </button>
           )}
 
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: displayColor, marginTop: userRole === 'teacher' ? '2.5rem' : '0' }}>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: displayColor, marginTop: userRole === 'staff' ? '2.5rem' : '0' }}>
             <TypeIcon size={32} /> {activity.title}
           </h2>
           <div style={{ width: '100%', height: '300px', background: 'black', borderRadius: '24px', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', boxShadow: `0 10px 30px ${displayColor}40` }}>
@@ -143,7 +143,7 @@ export default function ActivityHub({ userRole, student }) {
 
           return (
           <div key={activity.id} className="card animate-pop" style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', borderTop: `8px solid ${displayColor}` }}>
-            {userRole === 'teacher' && activity.type !== 'image' && activity.type !== 'audio' && (
+            {userRole === 'staff' && activity.type !== 'image' && activity.type !== 'audio' && (
                <button 
                   onClick={(e) => handleToggleRouting(activity, e)}
                   style={{ position: 'absolute', top: '10px', left: '10px', background: activity.requiresNewTab ? '#ffebee' : '#e8f5e9', color: activity.requiresNewTab ? 'var(--primary-red)' : 'var(--primary-green)', padding: '0.4rem 0.8rem', borderRadius: '12px', border: 'none', cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-soft)', fontWeight: 'bold', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
@@ -153,7 +153,7 @@ export default function ActivityHub({ userRole, student }) {
                </button>
             )}
 
-            <div style={{ position: 'relative', width: '100%', height: '150px', background: activity.type === 'image' ? '#f3e5f5' : '#fafafa', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginTop: userRole === 'teacher' && activity.type !== 'image' && activity.type !== 'audio' ? '2.5rem' : '0' }}>
+            <div style={{ position: 'relative', width: '100%', height: '150px', background: activity.type === 'image' ? '#f3e5f5' : '#fafafa', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginTop: userRole === 'staff' && activity.type !== 'image' && activity.type !== 'audio' ? '2.5rem' : '0' }}>
                 {(activity.bgImage || activity.type === 'image') ? (
                     <img src={activity.bgImage || activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
