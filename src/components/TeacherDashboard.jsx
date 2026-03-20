@@ -105,17 +105,23 @@ export default function TeacherDashboard() {
   const handleAddActivity = async (type) => {
     const title = type === 'video' ? 'שעת סיפור חדשה' : 'דף עבודה חדש';
     const message = type === 'video' 
-       ? 'הזן קישור לסרטון או משחק:\n(טיפ: ניתן להדביק קישורי YouTube או Wordwall רגילים - המערכת תתאים אותם אוטומטית!)'
+       ? 'הזן קישור לסרטון או משחק:\n(טיפ: ניתן להדביק קישורי YouTube רגילים - המערכת תתאים אותם אוטומטית!)'
        : 'הזן קישור לקובץ PDF:';
     const url = prompt(message);
     if (!url) return;
     
+    let requiresNewTab = false;
+    if (type !== 'pdf') {
+        requiresNewTab = window.confirm("האם לפתוח משחק זה בחלון חדש?\n(חובה עבור Wordwall וסרטוני יוטיוב חסומי-זכויות)\n\nלחצו 'אישור/OK' כדי לפתוח בחלון חדש, או 'ביטול/Cancel' כדי לשמור את הילד לכוד בתוך האפליקציה.");
+    }
+
     try {
         await addDoc(collection(db, 'activities'), {
             title,
             type,
             url,
             active: true,
+            requiresNewTab,
             createdAt: new Date()
         });
         alert('הפעילות נוספה בהצלחה!');
