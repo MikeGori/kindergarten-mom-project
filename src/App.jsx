@@ -8,7 +8,7 @@ import StaffLogin from './components/StaffLogin'; // Keeping this import as it w
 import ActivityManager from './components/ActivityManager';
 import { getSchoolSettings, db } from './lib/firebase'; // Assuming db is exported from firebase.js
 import { onSnapshot, doc } from 'firebase/firestore';
-import { Users, Baby, GraduationCap } from 'lucide-react'; // Added GraduationCap
+import { Users, Baby, GraduationCap, Sun, Star, Heart, Music } from 'lucide-react'; // Added GraduationCap and Floating Background Icons
 
 export default function App() {
   const [currentView, setCurrentView] = useState('landing');
@@ -89,12 +89,19 @@ export default function App() {
 
   if (currentView === 'landing') {
     return (
-        <div className="app-container" dir="rtl" style={{ background: 'linear-gradient(135deg, hsl(210, 100%, 98%) 0%, hsl(210, 100%, 92%) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem' }}>
-          <div style={{ maxWidth: '1100px', width: '100%', textAlign: 'center' }}>
-            <h1 className="animate-pop" style={{ fontSize: '4.5rem', color: 'var(--primary-blue)', marginBottom: '1rem', fontWeight: 900, textShadow: '2px 2px 4px rgba(0,0,0,0.05)' }}>
+        <div className="app-container" dir="rtl" style={{ background: 'linear-gradient(-45deg, #FF9A9E, #FECFEF, #E2F0CB, #B5EAD7)', backgroundSize: '400% 400%', animation: 'gradientBG 15s ease infinite', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem', position: 'relative', overflow: 'hidden' }}>
+          
+          {/* Floating background elements */}
+          <Sun size={120} color="white" style={{ position: 'absolute', top: '5%', right: '10%', opacity: 0.5, animation: 'spin 20s linear infinite' }} />
+          <Star size={80} color="white" style={{ position: 'absolute', top: '20%', left: '15%', opacity: 0.6, animation: 'float 6s ease-in-out infinite' }} />
+          <Heart size={100} color="white" style={{ position: 'absolute', bottom: '10%', right: '20%', opacity: 0.5, animation: 'float 5s ease-in-out infinite 1s' }} />
+          <Music size={90} color="white" style={{ position: 'absolute', bottom: '15%', left: '10%', opacity: 0.5, animation: 'float 7s ease-in-out infinite 2s' }} />
+
+          <div style={{ maxWidth: '1100px', width: '100%', textAlign: 'center', position: 'relative', zIndex: 10 }}>
+            <h1 className="animate-pop" style={{ fontSize: '6rem', background: 'linear-gradient(45deg, var(--primary-blue), var(--primary-purple))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1rem', fontWeight: 900, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.15))' }}>
               {schoolName} ✨
             </h1>
-            <p style={{ fontSize: '1.6rem', color: 'var(--text-muted)', marginBottom: '5rem', fontWeight: 600 }}>ברוכים הבאים לעולם הלמידה שלנו!</p>
+            <p style={{ fontSize: '1.8rem', color: 'var(--text-main)', marginBottom: '5rem', fontWeight: 800, textShadow: '0 2px 4px rgba(255,255,255,0.7)' }}>ברוכים הבאים לעולם הלמידה שלנו!</p>
             
             <div className="grid-container" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '3rem' }}>
                 
