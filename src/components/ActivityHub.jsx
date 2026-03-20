@@ -36,7 +36,26 @@ export default function ActivityHub({ userRole, student }) {
     } else if (activity.type === 'audio') {
        setSelectedAudio({ url: activity.url, title: activity.title, bgImage: activity.bgImage || null });
     } else {
-       setActiveIframe({ url: activity.url, title: activity.title });
+       let finalUrl = activity.url;
+       
+       // Transform YouTube links to embed format to bypass X-Frame-Options blocks
+       try {
+           if (finalUrl.includes('youtube.com/watch?v=')) {
+               finalUrl = finalUrl.replace('watch?v=', 'embed/');
+               const ampersandIndex = finalUrl.indexOf('&');
+               if (ampersandIndex !== -1) finalUrl = finalUrl.substring(0, ampersandIndex);
+           } else if (finalUrl.includes('youtu.be/')) {
+               const videoId = finalUrl.split('youtu.be/')[1].split('?')[0];
+               finalUrl = `https://www.youtube.com/embed/${videoId}`;
+           } else if (finalUrl.includes('youtube.com/shorts/')) {
+               const videoId = finalUrl.split('youtube.com/shorts/')[1].split('?')[0];
+               finalUrl = `https://www.youtube.com/embed/${videoId}`;
+           }
+       } catch (e) {
+           console.warn("Failed to parse YouTube URL:", e);
+       }
+
+       setActiveIframe({ url: finalUrl, title: activity.title });
     }
     
     if (userRole === 'student' && student) {
