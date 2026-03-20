@@ -47,7 +47,7 @@ export default function Mascot() {
     const progressPercentage = Math.min((mascotData.totalStars / 50) * 100, 100);
 
     return (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', overflow: 'hidden', padding: '3vh 2vw', background: 'radial-gradient(circle at center, #cbf3f0 0%, #2ec4b6 100%)', zIndex: 9999 }} dir="rtl">
+        <div style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', overflowX: 'hidden', padding: '3vh 2vw 12vh', background: 'radial-gradient(circle at center, #cbf3f0 0%, #2ec4b6 100%)', margin: '-1rem -1rem -8rem -1rem', zIndex: 1 }} dir="rtl">
             
             {/* Massive Sunburst Ray Animation in Background */}
             <div style={{ position: 'absolute', top: '50%', left: '50%', width: '200vw', height: '200vw', background: 'repeating-conic-gradient(rgba(255,255,255,0.4) 0 15deg, transparent 15deg 30deg)', transform: 'translate(-50%, -50%)', animation: 'spin 120s linear infinite', zIndex: 0, pointerEvents: 'none' }} />

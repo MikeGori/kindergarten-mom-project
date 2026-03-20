@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Cat, Dog, Bird, Fish, Circle, Square, Triangle, Star, Volume2 } from 'lucide-react';
+import { Cat, Dog, Bird, Fish, Circle, Square, Triangle, Star, Volume2, Sparkles } from 'lucide-react';
 import '../index.css';
 import { db } from '../lib/firebase';
 import { collection, onSnapshot, addDoc, doc, updateDoc, increment } from 'firebase/firestore';
@@ -387,7 +387,11 @@ export default function VisualLogin({ onLogin }) {
       )}
       {step === 3 && selectedChild && (
         <div className="card animate-pop" style={{ textAlign: 'center', maxWidth: '600px', width: '100%', padding: '4rem' }}>
-          <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>🎉🌟✨</div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem', animation: 'float 4s ease-in-out infinite' }}>
+              <Sparkles size={64} color="#06D6A0" fill="#06D6A0" style={{ animation: 'spin 10s linear infinite' }} />
+              <Star size={80} color="#FFD166" fill="#FFD166" style={{ animation: 'spin 12s linear infinite reverse', filter: 'drop-shadow(0 10px 15px rgba(255,209,102,0.5))' }} />
+              <Sparkles size={64} color="#EF476F" fill="#EF476F" style={{ animation: 'spin 8s linear infinite' }} />
+          </div>
           <h1 style={{ fontSize: '3rem', color: 'var(--primary-blue)', marginBottom: '1rem' }}>הידד, {selectedChild.name}!</h1>
           <p style={{ fontSize: '1.5rem', color: 'var(--text-muted)', marginBottom: '3rem' }}>הצלחת!</p>
           <button 
