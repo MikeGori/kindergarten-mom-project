@@ -181,6 +181,10 @@ export default function ActivityManager() {
     await updateDoc(doc(db, 'activities', id), { active: !current });
   };
 
+  const handleToggleRouting = async (id, currentVal) => {
+    await updateDoc(doc(db, 'activities', id), { requiresNewTab: !currentVal });
+  };
+
   return (
     <div style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto', paddingBottom: '8rem' }}>
 
@@ -435,6 +439,16 @@ export default function ActivityManager() {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
+                {activity.type !== 'image' && activity.type !== 'audio' && activity.type !== 'pdf' && (
+                  <button
+                    onClick={() => handleToggleRouting(activity.id, activity.requiresNewTab)}
+                    title={activity.requiresNewTab ? 'לכוד בתוך האפליקציה במקום לפתוח בחלון חדש' : 'פתיחה בחלון חדש (חובה לקישורי Wordwall ועוד)'}
+                    style={{ background: activity.requiresNewTab ? '#ffebee' : '#e8f5e9', color: activity.requiresNewTab ? 'var(--primary-red)' : 'var(--primary-green)', padding: '0.5rem 1rem', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}
+                  >
+                     {activity.requiresNewTab ? '🔗 חלון נפרד' : '🏠 לכוד בגן'}
+                  </button>
+                )}
+
                 <button
                   onClick={() => handleToggle(activity.id, activity.active)}
                   title={activity.active ? 'הסתר מהילדים' : 'הצג לילדים'}
