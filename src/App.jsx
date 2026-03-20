@@ -210,7 +210,7 @@ export default function App() {
 
       <div style={{ position: 'relative', zIndex: 10, paddingBottom: '2rem' }}>
           {showNavbar && (
-            <header className="app-header animate-pop" style={{ position: 'sticky', top: 0, zIndex: 1000, margin: '0.5rem 1rem', borderRadius: '12px', padding: '0.5rem 1.5rem' }}>
+            <header className="app-header animate-pop" style={{ position: 'fixed', top: '0.5rem', left: '1rem', right: '1rem', zIndex: 1000, borderRadius: '12px', padding: '0.5rem 1.5rem' }}>
                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                  <div className="avatar-small" style={{ background: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)', padding: '0.5rem', width: '40px', height: '40px', borderRadius: '12px' }}>
                    {userRole === 'staff' ? <GraduationCap size={20} color="white" /> : <Baby size={20} color="white" />}
@@ -230,7 +230,7 @@ export default function App() {
 
           {showNavbar && <Navbar currentView={currentView} setView={setCurrentView} userRole={userRole} />}
 
-          <main style={{ marginTop: '1rem' }}>
+          <main style={{ marginTop: showNavbar ? '6rem' : '1rem' }}>
             {renderView()}
           </main>
 
