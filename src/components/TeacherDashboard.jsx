@@ -104,7 +104,10 @@ export default function TeacherDashboard() {
 
   const handleAddActivity = async (type) => {
     const title = type === 'video' ? 'שעת סיפור חדשה' : 'דף עבודה חדש';
-    const url = prompt(`הזן קישור ל-${type === 'video' ? 'סרטון' : 'קובץ PDF'}:`);
+    const message = type === 'video' 
+       ? 'הזן קישור לסרטון או משחק:\n(טיפ: ניתן להדביק קישורי YouTube או Wordwall רגילים - המערכת תתאים אותם אוטומטית!)'
+       : 'הזן קישור לקובץ PDF:';
+    const url = prompt(message);
     if (!url) return;
     
     try {

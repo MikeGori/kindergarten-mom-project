@@ -50,6 +50,12 @@ export default function ActivityHub({ userRole, student }) {
            } else if (finalUrl.includes('youtube.com/shorts/')) {
                const videoId = finalUrl.split('youtube.com/shorts/')[1].split('?')[0];
                finalUrl = `https://www.youtube.com/embed/${videoId}`;
+           } else if (finalUrl.includes('wordwall.net/')) {
+               // Wordwall uses /resource/ or /play/ for standard links, needs /embed/
+               finalUrl = finalUrl.replace('/resource/', '/embed/').replace('/play/', '/embed/');
+           } else if (finalUrl.includes('vimeo.com/')) {
+               const videoId = finalUrl.split('vimeo.com/')[1].split('?')[0];
+               finalUrl = `https://player.vimeo.com/video/${videoId}`;
            }
        } catch (e) {
            console.warn("Failed to parse YouTube URL:", e);
