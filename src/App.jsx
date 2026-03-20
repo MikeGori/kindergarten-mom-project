@@ -21,6 +21,19 @@ export default function App() {
   const [staffPassInput, setStaffPassInput] = useState('');
   const [isStaffLogining, setIsStaffLogining] = useState(false);
   const [error, setError] = useState('');
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (currentView !== 'landing') return;
+    const handleMouseMove = (e) => {
+      // Calculate offset from center (-1 to 1)
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      setMousePos({ x, y });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [currentView]);
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, 'settings', 'school'), (snap) => {
@@ -89,13 +102,20 @@ export default function App() {
 
   if (currentView === 'landing') {
     return (
-        <div className="app-container" dir="rtl" style={{ background: 'linear-gradient(-45deg, #FF9A9E, #FECFEF, #E2F0CB, #B5EAD7)', backgroundSize: '400% 400%', animation: 'gradientBG 15s ease infinite', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem', position: 'relative', overflowX: 'hidden' }}>
+        <div className="app-container" dir="rtl" style={{ background: '#f8faff', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem', position: 'relative', overflowX: 'hidden' }}>
           
-          {/* Floating background elements */}
-          <Sun size={120} color="white" style={{ position: 'absolute', top: '5%', right: '10%', opacity: 0.5, animation: 'spin 20s linear infinite', zIndex: 1 }} />
-          <Star size={80} color="white" style={{ position: 'absolute', top: '20%', left: '15%', opacity: 0.6, animation: 'float 6s ease-in-out infinite', zIndex: 1 }} />
-          <Heart size={100} color="white" style={{ position: 'absolute', bottom: '10%', right: '20%', opacity: 0.5, animation: 'float 5s ease-in-out infinite 1s', zIndex: 1 }} />
-          <Music size={90} color="white" style={{ position: 'absolute', bottom: '15%', left: '10%', opacity: 0.5, animation: 'float 7s ease-in-out infinite 2s', zIndex: 1 }} />
+          {/* Vibrant Animated Background Blobs */}
+          <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(255,209,102,0.4) 0%, rgba(255,209,102,0) 70%)', filter: 'blur(40px)', animation: 'float 8s ease-in-out infinite', zIndex: 0, transform: `translate(${mousePos.x * -20}px, ${mousePos.y * -20}px)` }} />
+          <div style={{ position: 'absolute', bottom: '-20%', right: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(17,138,178,0.25) 0%, rgba(17,138,178,0) 70%)', filter: 'blur(60px)', animation: 'float 12s ease-in-out infinite reverse', zIndex: 0, transform: `translate(${mousePos.x * 30}px, ${mousePos.y * 30}px)` }} />
+          <div style={{ position: 'absolute', top: '15%', right: '5%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(239,71,111,0.2) 0%, rgba(239,71,111,0) 70%)', filter: 'blur(50px)', animation: 'float 10s ease-in-out infinite 2s', zIndex: 0, transform: `translate(${mousePos.x * 15}px, ${mousePos.y * 15}px)` }} />
+
+          {/* Interactive 3D Parallax Icons */}
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
+              <Sun size={140} color="#FFD166" fill="#FFD166" style={{ position: 'absolute', top: '8%', right: '12%', opacity: 0.9, animation: 'spin 25s linear infinite', transform: `translate(${mousePos.x * 40}px, ${mousePos.y * 40}px)`, filter: 'drop-shadow(0 15px 25px rgba(255,209,102,0.6))' }} />
+              <Star size={90} color="#118AB2" fill="#118AB2" style={{ position: 'absolute', top: '25%', left: '10%', opacity: 0.8, animation: 'float 6s ease-in-out infinite', transform: `translate(${mousePos.x * -50}px, ${mousePos.y * -50}px)`, filter: 'drop-shadow(0 15px 25px rgba(17,138,178,0.5))' }} />
+              <Heart size={120} color="#EF476F" fill="#EF476F" style={{ position: 'absolute', bottom: '15%', right: '15%', opacity: 0.9, animation: 'float 5s ease-in-out infinite 1s', transform: `translate(${mousePos.x * 60}px, ${mousePos.y * 60}px)`, filter: 'drop-shadow(0 15px 25px rgba(239,71,111,0.5))' }} />
+              <Music size={100} color="#06D6A0" fill="#06D6A0" style={{ position: 'absolute', bottom: '20%', left: '15%', opacity: 0.9, animation: 'float 7s ease-in-out infinite 2s', transform: `translate(${mousePos.x * -70}px, ${mousePos.y * -70}px)`, filter: 'drop-shadow(0 15px 25px rgba(6,214,160,0.5))' }} />
+          </div>
 
           <div style={{ maxWidth: '1100px', width: '100%', textAlign: 'center', position: 'relative', zIndex: 10 }}>
             <h1 className="animate-pop" style={{ fontSize: '6rem', color: 'var(--primary-blue)', marginBottom: '1rem', fontWeight: 900, textShadow: '0 4px 20px rgba(255,255,255,0.8)' }}>
