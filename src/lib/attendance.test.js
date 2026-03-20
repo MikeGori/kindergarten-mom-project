@@ -1,7 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { calculateAttendance } from './attendance';
 
 describe('Attendance Logic', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-16T12:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   const mockLogs = [
     { timestamp: '2026-03-16T10:00:00Z', userId: '1', childName: 'Leo', day: 'Mon' },
     { timestamp: '2026-03-16T11:00:00Z', userId: '2', childName: 'Mia', day: 'Mon' },

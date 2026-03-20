@@ -128,8 +128,9 @@ export default function VisualLogin({ onLogin }) {
       const correctSeq = selectedChild.secret_sequence || ['circle', 'square']; // Fallback for old data
       const isMatch = newSeq.every((val, index) => val === correctSeq[index]);
       
-      setTimeout(() => {
+      setTimeout(async () => {
         if (isMatch) {
+            await logAttendance(selectedChild.id, selectedChild.name);
             setStep(3);
         } else {
             alert("אופס! סיסמה לא נכונה. נסו שוב!");
@@ -284,6 +285,8 @@ export default function VisualLogin({ onLogin }) {
                 style={{ width: '100%', height: '140px', borderRadius: '32px' }}
                 onClick={() => handleShapeClick(shape)}
                 disabled={regSequence.length >= 2}
+                aria-label={`בחר ${shape.id === 'circle' ? 'עיגול' : shape.id === 'square' ? 'ריבוע' : shape.id === 'triangle' ? 'משולש' : 'כוכב'}`}
+                data-testid={`reg-shape-button-${shape.id}`}
               >
                 <shape.icon size={64} color={shape.color} />
               </button>

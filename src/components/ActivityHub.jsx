@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Play, FileText, CheckCircle, Video, ExternalLink, Image as ImageIcon, Gamepad2, Music, Palette, BookOpen, Rocket, Star, Heart, Smile, Sun } from 'lucide-react';
 import '../index.css';
 import { db } from '../lib/firebase';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, addDoc } from 'firebase/firestore';
 
-export default function ActivityHub() {
+export default function ActivityHub({ userRole, student }) {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedAudio, setSelectedAudio] = useState(null);
 
   useEffect(() => {
     const q = query(collection(db, 'activities'), where('active', '==', true));
@@ -22,6 +23,30 @@ export default function ActivityHub() {
   }, []);
 
   if (loading) return <div style={{ padding: '4rem', textAlign: 'center' }}>טוען פעילויות...</div>;
+
+  const handleActivityClick = async (activity) => {
+    if (activity.type === 'image') {
+       setSelectedImage(activity.url);
+    } else if (activity.type === 'audio') {
+       setSelectedAudio({ url: activity.url, title: activity.title, bgImage: activity.bgImage || null });
+    } else {
+       window.open(activity.url, '_blank');
+    }
+    
+    if (userRole === 'student' && student) {
+       try {
+           await addDoc(collection(db, 'activityClicks'), {
+               studentId: student.id,
+               studentName: student.name,
+               activityId: activity.id,
+               activityTitle: activity.title,
+               timestamp: new Date()
+           });
+       } catch (err) {
+           console.error("Failed to log activity click", err);
+       }
+    }
+  };
 
   return (
     <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', textAlign: 'right', paddingBottom: '8rem' }}>
@@ -38,11 +63,14 @@ export default function ActivityHub() {
             <TypeIcon size={32} /> {activity.title}
           </h2>
           <div style={{ width: '100%', height: '300px', background: 'black', borderRadius: '24px', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', boxShadow: `0 10px 30px ${displayColor}40` }}>
-            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(45deg, ${displayColor}, var(--primary-blue))`, opacity: 0.8 }}></div>
+            {activity.bgImage && (
+                <img src={activity.bgImage} alt={activity.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
+            )}
+            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(45deg, ${displayColor}, var(--primary-blue))`, opacity: activity.bgImage ? 0.3 : 0.8 }}></div>
             <button 
               className="giant-button" 
               style={{ zIndex: 10, width: '100px', height: '100px', borderRadius: '50%', background: 'white', border: `4px solid ${displayColor}` }}
-              onClick={() => window.open(activity.url, '_blank')}
+              onClick={() => handleActivityClick(activity)}
             >
               <Play size={44} color={displayColor} style={{ marginLeft: '6px' }} />
             </button>
@@ -63,22 +91,38 @@ export default function ActivityHub() {
 
           return (
           <div key={activity.id} className="card animate-pop" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', borderTop: `8px solid ${displayColor}` }}>
-            <div style={{ width: '100%', height: '150px', background: activity.type === 'image' ? '#f3e5f5' : '#fafafa', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                {activity.type === 'image' ? <img src={activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
-                 <TypeIcon size={72} color={displayColor} />}
+            <div style={{ position: 'relative', width: '100%', height: '150px', background: activity.type === 'image' ? '#f3e5f5' : '#fafafa', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                {(activity.bgImage || activity.type === 'image') ? (
+                    <img src={activity.bgImage || activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                    <TypeIcon size={72} color={displayColor} />
+                )}
+                
+                {(activity.bgImage || activity.type === 'image') && (
+                    <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'white', padding: '6px', borderRadius: '50%', boxShadow: '0 4px 8px rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <TypeIcon size={24} color={displayColor} />
+                    </div>
+                )}
             </div>
             <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0 }}>{activity.title}</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', marginTop: '0.5rem', fontWeight: 600 }}>{activity.type === 'image' ? 'תמונה מהמורה' : 'לחצו כדי להתחיל'}</p>
             {activity.type === 'image' ? (
                 <button 
-                  onClick={() => setSelectedImage(activity.url)}
+                  onClick={() => handleActivityClick(activity)}
                   style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-purple)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 8px 20px hsla(262, 70%, 68%, 0.3)' }}
                 >
                   הגדל תמונה <ImageIcon size={20} />
                 </button>
+            ) : activity.type === 'audio' ? (
+                <button 
+                  onClick={() => handleActivityClick(activity)}
+                  style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-purple)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 8px 20px hsla(262, 70%, 68%, 0.3)' }}
+                >
+                  בואו נשיר <Music size={20} />
+                </button>
             ) : (
                 <button 
-                    onClick={() => window.open(activity.url, '_blank')}
+                    onClick={() => handleActivityClick(activity)}
                     style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: displayColor, color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: `0 8px 20px ${displayColor}66` }}
                 >
                   בואו נשחק <ExternalLink size={20} />
@@ -108,6 +152,42 @@ export default function ActivityHub() {
               >
                   ✕
               </button>
+          </div>
+      )}
+
+      {/* Audio Player Modal */}
+      {selectedAudio && (
+          <div 
+            onClick={() => setSelectedAudio(null)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', cursor: 'zoom-out' }}
+          >
+              <div 
+                 onClick={e => e.stopPropagation()} 
+                 className="card animate-pop" 
+                 style={{ background: 'white', padding: '3rem', textAlign: 'center', borderRadius: '32px', maxWidth: '400px', width: '100%', cursor: 'default' }}
+              >
+                 <div style={{ width: '150px', height: '150px', margin: '0 auto 2rem auto', borderRadius: '50%', background: 'var(--primary-purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', boxShadow: 'var(--shadow-soft)' }}>
+                    {selectedAudio.bgImage ? (
+                        <img src={selectedAudio.bgImage} alt="Cover" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                        <Music size={80} color="white" />
+                    )}
+                 </div>
+                 <h2 style={{ fontSize: '2rem', color: 'var(--primary-blue)', marginBottom: '2rem' }}>{selectedAudio.title}</h2>
+                 <audio 
+                    src={selectedAudio.url} 
+                    controls 
+                    autoPlay 
+                    style={{ width: '100%', outline: 'none' }}
+                 />
+                 <button 
+                   onClick={() => setSelectedAudio(null)}
+                   className="giant-button"
+                   style={{ width: '100%', height: 'auto', padding: '1rem', marginTop: '2rem', background: '#ffebee', color: 'var(--primary-red)', fontSize: '1.2rem', fontWeight: 'bold' }}
+                 >
+                   סגור שיר
+                 </button>
+              </div>
           </div>
       )}
     </div>

@@ -61,7 +61,7 @@ export default function App() {
         return <TeacherDashboard />;
       case 'learning':
       case 'games': // alias for backwards compatibility
-        return <ActivityHub />;
+        return <ActivityHub userRole={userRole} student={activeKid} />;
       case 'feed':
       case 'friends': // alias
         return <ShowAndTell userRole={userRole} userName={userRole === 'staff' ? teacherName : activeKid?.name} />;
@@ -75,13 +75,13 @@ export default function App() {
       default:
          // If activeKid exists and currentView is not 'login', default to 'learning' (ActivityHub)
         if (activeKid && userRole === 'student') {
-          return <ActivityHub />;
+          return <ActivityHub userRole={userRole} student={activeKid} />;
         }
         // For staff, if currentView is not recognized, default to dashboard
         if (userRole === 'staff') {
           return <TeacherDashboard />;
         }
-        return <ActivityHub />; // Fallback
+        return <ActivityHub userRole={userRole} student={activeKid} />; // Fallback
     }
   };
 

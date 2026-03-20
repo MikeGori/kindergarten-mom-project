@@ -34,7 +34,8 @@ vi.mock('recharts', () => ({
 
 describe('TeacherDashboard Component Resilience', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
+    getDoc.mockResolvedValue({ exists: () => false });
   });
 
   it('shows loading state initially', () => {

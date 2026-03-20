@@ -58,10 +58,23 @@ describe('VisualLogin Component (Firebase Version)', () => {
     const input = screen.getByPlaceholderText(/איך קוראים לך\?/i);
     fireEvent.change(input, { target: { value: 'חדש' } });
     
-    const submitBtn = screen.getByText(/הצטרפתי!/i);
-    fireEvent.click(submitBtn);
+    const nextBtn = screen.getByText(/המשך לצייר סיסמה/i);
+    fireEvent.click(nextBtn);
 
-    expect(addDoc).toHaveBeenCalled();
+    // Step 5: Pick secret password
+    await waitFor(() => {
+        expect(screen.getByText(/הסיסמה הסודית שלך/i)).toBeDefined();
+    });
+
+    fireEvent.click(screen.getByTestId('reg-shape-button-circle'));
+    fireEvent.click(screen.getByTestId('reg-shape-button-square'));
+
+    const finalSubmitBtn = await screen.findByText(/זהו, הצטרפתי!/i);
+    fireEvent.click(finalSubmitBtn);
+
+    await waitFor(() => {
+        expect(addDoc).toHaveBeenCalled();
+    });
   });
 
   it('allows entering a shape sequence and moves to success step', async () => {

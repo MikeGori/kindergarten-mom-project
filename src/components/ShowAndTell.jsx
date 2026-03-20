@@ -36,7 +36,7 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
       content: content,
       likes: 0,
       stars: 0,
-      color: type === 'draw' ? 'var(--primary-red)' : type === 'audio' ? 'var(--primary-blue)' : 'var(--primary-green)',
+      color: type === 'draw' ? 'var(--primary-red)' : type === 'audio' ? 'var(--primary-blue)' : type === 'picture' ? 'var(--primary-yellow)' : 'var(--primary-green)',
       createdAt: new Date()
     };
     
@@ -84,6 +84,21 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
         <div style={{ padding: '2rem' }}>
             {activeTool === 'draw' && <DrawingCanvas onSave={(data) => addPost('draw', data)} />}
             {activeTool === 'audio' && <AudioRecorder onSave={(url) => addPost('audio', url)} />}
+            {activeTool === 'picture' && (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                   <label className="giant-button" style={{ width: 'auto', padding: '1rem 2rem', background: 'var(--primary-yellow)', cursor: 'pointer', color: 'white' }}>
+                     <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
+                         if(e.target.files && e.target.files[0]) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => addPost('picture', ev.target.result);
+                            reader.readAsDataURL(e.target.files[0]);
+                         }
+                     }} />
+                     <ImageIcon size={48} style={{ marginLeft: '1rem' }} />
+                     <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>בחר תמונה</span>
+                   </label>
+                </div>
+            )}
             {activeTool === 'emoji' && (
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
                     {EMOJIS.map(e => (
@@ -104,6 +119,9 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
                     </button>
                     <button className="giant-button" onClick={() => setActiveTool('audio')} style={{ background: 'white' }} aria-label="הקלט משהו">
                         <Mic size={48} color="var(--primary-blue)" />
+                    </button>
+                    <button className="giant-button" onClick={() => setActiveTool('picture')} style={{ background: 'white' }} aria-label="העלה תמונה">
+                        <ImageIcon size={48} color="var(--primary-yellow)" />
                     </button>
                 </div>
             )}
@@ -127,7 +145,7 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
             <div key={post.id} className="card animate-pop" style={{ borderTop: `12px solid ${post.color}`, padding: '1.5rem', position: 'relative' }}>
               
               {/* Moderation Tool */}
-              {(userRole === 'staff' || userRole === 'teacher') && (
+              {(userRole === 'staff' || userRole === 'teacher' || post.author === userName) && (
                   <div style={{ position: 'absolute', top: '1rem', left: '1rem', zIndex: 10 }}>
                       {confirmDeleteId === post.id ? (
                           <div style={{ display: 'flex', gap: '0.5rem', background: 'white', padding: '0.5rem', borderRadius: '12px', boxShadow: 'var(--shadow-soft)', border: '2px solid var(--primary-red)' }}>
@@ -169,6 +187,7 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
               }}>
                 {post.type === 'emoji' && <span style={{ fontSize: '5rem' }}>{post.content}</span>}
                 {post.type === 'draw' && <img src={post.content} alt="Drawing" style={{ width: '100%', height: 'auto', borderRadius: '16px', objectFit: 'contain' }} />}
+                {post.type === 'picture' && <img src={post.content} alt="Picture" style={{ width: '100%', height: 'auto', borderRadius: '16px', objectFit: 'cover' }} />}
                 {post.type === 'audio' && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
                         <button className="giant-button" style={{ width: '60px', height: '60px', background: 'var(--primary-blue)' }} aria-label="הפעל הודעה קולית" onClick={() => {

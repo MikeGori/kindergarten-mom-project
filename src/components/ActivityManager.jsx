@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Video, FileText, Plus, Trash2, ToggleLeft, ToggleRight, Link, Image as ImageIcon, Gamepad2, Music, Palette, BookOpen, Rocket, Star, Heart, Smile, Sun } from 'lucide-react';
+import { Video, FileText, Plus, Trash2, ToggleLeft, ToggleRight, Link, Image as ImageIcon, Gamepad2, Music, Palette, BookOpen, Rocket, Star, Heart, Smile, Sun, Edit3 } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { uploadMedia } from '../services/storage';
@@ -8,9 +8,10 @@ export default function ActivityManager() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: '', url: '', type: 'link', icon: 'Gamepad2', color: 'var(--primary-green)' });
+  const [form, setForm] = useState({ title: '', url: '', type: 'link', icon: 'Gamepad2', color: 'var(--primary-green)', bgImage: '' });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [editingId, setEditingId] = useState(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   useEffect(() => {
@@ -25,26 +26,77 @@ export default function ActivityManager() {
     return unsub;
   }, []);
 
+  const handleBgImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 800; // Resize
+        if (width > height) {
+          if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+        } else {
+          if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+        }
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        setForm(f => ({ ...f, bgImage: canvas.toDataURL('image/jpeg', 0.8) }));
+      };
+    };
+  };
+
   const handleAdd = async (e) => {
     e.preventDefault();
-    if (!form.title || !form.url) return;
+    if (!form.title || (!form.url && form.type !== 'image')) return;
     setSaving(true);
     try {
-      await addDoc(collection(db, 'activities'), {
+      const payload = {
         title: form.title,
         url: form.url,
         type: form.type,
         icon: form.icon || 'Star',
         color: form.color || 'var(--primary-yellow)',
-        active: true,
-        createdAt: new Date()
-      });
-      setForm({ title: '', url: '', type: 'link', icon: 'Gamepad2', color: 'var(--primary-green)' });
+        bgImage: form.bgImage || ''
+      };
+
+      if (editingId) {
+        await updateDoc(doc(db, 'activities', editingId), payload);
+      } else {
+        await addDoc(collection(db, 'activities'), {
+          ...payload,
+          active: true,
+          createdAt: new Date()
+        });
+      }
+      setForm({ title: '', url: '', type: 'link', icon: 'Gamepad2', color: 'var(--primary-green)', bgImage: '' });
+      setEditingId(null);
       setShowForm(false);
     } catch (err) {
-      alert('שגיאה בהוספה. בדקו את החיבור.');
+      alert('שגיאה בשמירה. בדקו את החיבור.');
     }
     setSaving(false);
+  };
+
+  const handleEditClick = (activity) => {
+    setForm({
+      title: activity.title || '',
+      url: activity.url || '',
+      type: activity.type || 'link',
+      icon: activity.icon || 'Gamepad2',
+      color: activity.color || 'var(--primary-green)',
+      bgImage: activity.bgImage || ''
+    });
+    setEditingId(activity.id);
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleImageUpload = (e) => {
@@ -93,7 +145,20 @@ export default function ActivityManager() {
         const result = await uploadMedia(file, 'activities/pdfs');
         setForm(f => ({ ...f, url: result.url, title: form.title || file.name }));
     } catch (err) {
-        alert("שגיאה בהעלאת הקובץ: " + err.message);
+        alert("שגיאה! ייתכן ואין לכם הרשאות כתיבה ב-Firebase Storage. כנסו לשם ושנו את ה-Rules ל- true.");
+    }
+    setSaving(false);
+  };
+
+  const handleAudioUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSaving(true);
+    try {
+        const result = await uploadMedia(file, 'activities/audio');
+        setForm(f => ({ ...f, url: result.url, title: form.title || file.name }));
+    } catch (err) {
+        alert("שגיאה! כדי להעלות קבצים מעל 1MB, חובה לאשר גישה ב-Firebase Storage Rules (לשנות true).");
     }
     setSaving(false);
   };
@@ -123,7 +188,7 @@ export default function ActivityManager() {
           </p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => { setEditingId(null); setForm({ title: '', url: '', type: 'link', icon: 'Gamepad2', color: 'var(--primary-green)', bgImage: '' }); setShowForm(!showForm); }}
           className="giant-button"
           style={{
             background: 'linear-gradient(135deg, var(--primary-blue), var(--primary-green))',
@@ -138,7 +203,7 @@ export default function ActivityManager() {
       {/* Add Form */}
       {showForm && (
         <div className="card animate-pop" style={{ marginBottom: '2rem', padding: '2rem', border: '2px solid var(--primary-blue)' }}>
-          <h2 style={{ marginTop: 0, marginBottom: '1.5rem' }}>פעילות חדשה</h2>
+          <h2 style={{ marginTop: 0, marginBottom: '1.5rem' }}>{editingId ? 'עריכת פעילות' : 'פעילות חדשה'}</h2>
           <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
             {/* Type picker */}
@@ -148,6 +213,7 @@ export default function ActivityManager() {
                   {[
                     { value: 'video', icon: Video, label: 'סרטון YouTube' },
                     { value: 'image', icon: ImageIcon, label: 'תמונה' },
+                    { value: 'audio', icon: Music, label: 'שיר / שמע' },
                     { value: 'pdf', icon: FileText, label: 'PDF' },
                     { value: 'link', icon: Link, label: 'קישור' },
                   ].map(({ value, icon: Icon, label }) => (
@@ -205,6 +271,25 @@ export default function ActivityManager() {
                 </div>
             </div>
 
+            {/* Background Image Upload */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <p style={{ fontWeight: 'bold', margin: 0 }}>תמונת רקע (אופציונלי):</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBgImageUpload}
+                      style={{ padding: '0.5rem', borderRadius: '8px', border: '2px dashed var(--glass-border)', background: 'white', flex: 1 }}
+                    />
+                    {form.bgImage && (
+                        <div style={{ position: 'relative', width: '60px', height: '60px', flexShrink: 0 }}>
+                            <img src={form.bgImage} alt="Preview" style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'cover' }} />
+                            <button type="button" onClick={() => setForm(f => ({ ...f, bgImage: '' }))} style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--primary-red)', color: 'white', border: 'none', borderRadius: '50%', cursor: 'pointer', padding: '2px 6px', fontWeight: 'bold' }}>✕</button>
+                        </div>
+                    )}
+                </div>
+            </div>
+
             <input
               type="text"
               placeholder="כותרת"
@@ -234,7 +319,7 @@ export default function ActivityManager() {
                     />
                     {form.url && <img src={form.url} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '12px', objectFit: 'contain' }} />}
                 </div>
-            ) : (
+            ) : form.type === 'pdf' ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <input
                       type="file"
@@ -246,6 +331,18 @@ export default function ActivityManager() {
                     />
                     {form.url && <p style={{ color: 'var(--primary-green)', fontWeight: 'bold' }}>✓ ה-PDF מוכן לשמירה</p>}
                 </div>
+            ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={handleAudioUpload}
+                      disabled={saving}
+                      style={{ padding: '1rem', borderRadius: '12px', border: '2px dashed var(--primary-purple)', fontSize: '1.1rem', outline: 'none', background: 'white' }}
+                      required={!form.url}
+                    />
+                    {form.url && <p style={{ color: 'var(--primary-green)', fontWeight: 'bold' }}>✓ קובץ השמע מוכן לשמירה</p>}
+                </div>
             )}
 
             <div style={{ display: 'flex', gap: '1rem' }}>
@@ -255,7 +352,7 @@ export default function ActivityManager() {
                 className="giant-button"
                 style={{ flex: 1, background: 'var(--primary-blue)', color: 'white' }}
               >
-                {saving ? 'שומר...' : 'שמור פעילות'}
+                {saving ? 'שומר...' : (editingId ? 'עדכן פעילות' : 'שמור פעילות')}
               </button>
               <button
                 type="button"
@@ -287,11 +384,12 @@ export default function ActivityManager() {
             video: { label: 'סרטון' },
             image: { label: 'תמונה' },
             pdf: { label: 'PDF' },
+            audio: { label: 'שיר / שמע' },
             link: { label: 'קישור' },
           }[activity.type] || { label: activity.type };
           
           const iconMap = { Gamepad2, Music, Palette, BookOpen, Rocket, Star, Heart, Smile, Sun, Video, ImageIcon, FileText, Link };
-          const TypeIcon = iconMap[activity.icon] || iconMap[activity.type === 'image' ? 'ImageIcon' : activity.type === 'pdf' ? 'FileText' : activity.type === 'video' ? 'Video' : 'Link'] || Star;
+          const TypeIcon = iconMap[activity.icon] || iconMap[activity.type === 'image' ? 'ImageIcon' : activity.type === 'audio' ? 'Music' : activity.type === 'pdf' ? 'FileText' : activity.type === 'video' ? 'Video' : 'Link'] || Star;
           const displayColor = activity.color || 'var(--primary-blue)';
 
           return (
@@ -300,8 +398,17 @@ export default function ActivityManager() {
               borderLeft: `6px solid ${displayColor}`,
               opacity: activity.active ? 1 : 0.5, transition: 'opacity 0.3s'
             }}>
-              <div style={{ background: displayColor, color: 'white', padding: '1rem', borderRadius: '16px', flexShrink: 0, boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
-                <TypeIcon size={32} />
+              <div style={{ position: 'relative', background: displayColor, color: 'white', padding: '1rem', borderRadius: '16px', flexShrink: 0, boxShadow: '0 4px 10px rgba(0,0,0,0.1)', width: '64px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                 {activity.bgImage ? (
+                    <>
+                       <img src={activity.bgImage} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
+                       <div style={{ position: 'relative', zIndex: 1, background: 'rgba(0,0,0,0.5)', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <TypeIcon size={24} />
+                       </div>
+                    </>
+                 ) : (
+                    <TypeIcon size={32} />
+                 )}
               </div>
 
               <div style={{ flex: 1, textAlign: 'right', minWidth: 0 }}>
@@ -339,13 +446,22 @@ export default function ActivityManager() {
                         <button onClick={() => setConfirmDeleteId(null)} style={{ background: '#eee', border: 'none', borderRadius: '8px', padding: '0.4rem 0.8rem', cursor: 'pointer', color: 'var(--text-main)' }}>ביטול</button>
                     </div>
                 ) : (
-                    <button
-                      onClick={() => setConfirmDeleteId(activity.id)}
-                      title="מחק פעילות"
-                      style={{ background: '#ffebee', border: 'none', cursor: 'pointer', padding: '0.75rem', borderRadius: '12px' }}
-                    >
-                      <Trash2 size={20} color="var(--primary-red)" />
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleEditClick(activity)}
+                        title="ערוך פעילות"
+                        style={{ background: '#e3f2fd', border: 'none', cursor: 'pointer', padding: '0.75rem', borderRadius: '12px' }}
+                      >
+                        <Edit3 size={20} color="var(--primary-blue)" />
+                      </button>
+                      <button
+                        onClick={() => setConfirmDeleteId(activity.id)}
+                        title="מחק פעילות"
+                        style={{ background: '#ffebee', border: 'none', cursor: 'pointer', padding: '0.75rem', borderRadius: '12px' }}
+                      >
+                        <Trash2 size={20} color="var(--primary-red)" />
+                      </button>
+                    </>
                 )}
               </div>
             </div>
