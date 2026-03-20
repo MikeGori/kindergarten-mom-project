@@ -225,11 +225,15 @@ export default function ActivityHub({ userRole, student }) {
       {/* Web IFrame Sandbox Modal */}
       {activeIframe && (
           <div 
+            onClick={() => setActiveIframe(null)}
             style={{ position: 'fixed', inset: 0, background: 'rgba(255, 255, 255, 0.4)', backdropFilter: 'blur(10px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
           >
-              <div className="card animate-pop" style={{ width: '100%', maxWidth: '900px', height: 'auto', minHeight: '60vh', maxHeight: '90vh', display: 'flex', flexDirection: 'column', background: 'rgba(255,255,255,0.9)', padding: '1.5rem', overflow: 'hidden', borderRadius: '32px', border: '4px solid var(--primary-blue)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
-                  
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }} dir="rtl">
+              <div 
+                  onClick={(e) => e.stopPropagation()}
+                  className="card animate-pop" 
+                  style={{ width: '100%', maxWidth: '1000px', height: '85vh', display: 'flex', flexDirection: 'column', background: 'rgba(255,255,255,0.9)', padding: '1.5rem', overflow: 'hidden', borderRadius: '32px', border: '4px solid var(--primary-blue)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}
+              >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexShrink: 0 }} dir="rtl">
                       <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 900, color: 'var(--primary-blue)' }}>{activeIframe.title}</h2>
                       <button 
                          onClick={() => setActiveIframe(null)}
@@ -250,7 +254,7 @@ export default function ActivityHub({ userRole, student }) {
                       />
                   </div>
                   
-                  <div style={{ paddingTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ paddingTop: '1.5rem', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
                      <button 
                         onClick={() => setActiveIframe(null)}
                         className="giant-button"
