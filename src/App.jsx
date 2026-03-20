@@ -111,10 +111,18 @@ export default function App() {
 
           {/* Interactive 3D Parallax Icons */}
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
-              <Sun size={140} color="#FFD166" fill="#FFD166" style={{ position: 'absolute', top: '8%', right: '12%', opacity: 0.9, animation: 'spin 25s linear infinite', transform: `translate(${mousePos.x * 40}px, ${mousePos.y * 40}px)`, filter: 'drop-shadow(0 15px 25px rgba(255,209,102,0.6))' }} />
-              <Star size={90} color="#118AB2" fill="#118AB2" style={{ position: 'absolute', top: '25%', left: '10%', opacity: 0.8, animation: 'float 6s ease-in-out infinite', transform: `translate(${mousePos.x * -50}px, ${mousePos.y * -50}px)`, filter: 'drop-shadow(0 15px 25px rgba(17,138,178,0.5))' }} />
-              <Heart size={120} color="#EF476F" fill="#EF476F" style={{ position: 'absolute', bottom: '15%', right: '15%', opacity: 0.9, animation: 'float 5s ease-in-out infinite 1s', transform: `translate(${mousePos.x * 60}px, ${mousePos.y * 60}px)`, filter: 'drop-shadow(0 15px 25px rgba(239,71,111,0.5))' }} />
-              <Music size={100} color="#06D6A0" fill="#06D6A0" style={{ position: 'absolute', bottom: '20%', left: '15%', opacity: 0.9, animation: 'float 7s ease-in-out infinite 2s', transform: `translate(${mousePos.x * -70}px, ${mousePos.y * -70}px)`, filter: 'drop-shadow(0 15px 25px rgba(6,214,160,0.5))' }} />
+              <div style={{ position: 'absolute', top: '8%', right: '12%', transform: `translate(${mousePos.x * 40}px, ${mousePos.y * 40}px)`, transition: 'transform 0.1s ease-out' }}>
+                  <Sun size={140} color="#FFD166" fill="#FFD166" style={{ opacity: 0.9, animation: 'spin 25s linear infinite', filter: 'drop-shadow(0 15px 25px rgba(255,209,102,0.6))' }} />
+              </div>
+              <div style={{ position: 'absolute', top: '25%', left: '10%', transform: `translate(${mousePos.x * -50}px, ${mousePos.y * -50}px)`, transition: 'transform 0.1s ease-out' }}>
+                  <Star size={90} color="#118AB2" fill="#118AB2" style={{ opacity: 0.8, animation: 'float 6s ease-in-out infinite', filter: 'drop-shadow(0 15px 25px rgba(17,138,178,0.5))' }} />
+              </div>
+              <div style={{ position: 'absolute', bottom: '15%', right: '15%', transform: `translate(${mousePos.x * 60}px, ${mousePos.y * 60}px)`, transition: 'transform 0.1s ease-out' }}>
+                  <Heart size={120} color="#EF476F" fill="#EF476F" style={{ opacity: 0.9, animation: 'float 5s ease-in-out infinite 1s', filter: 'drop-shadow(0 15px 25px rgba(239,71,111,0.5))' }} />
+              </div>
+              <div style={{ position: 'absolute', bottom: '20%', left: '15%', transform: `translate(${mousePos.x * -70}px, ${mousePos.y * -70}px)`, transition: 'transform 0.1s ease-out' }}>
+                  <Music size={100} color="#06D6A0" fill="#06D6A0" style={{ opacity: 0.9, animation: 'float 7s ease-in-out infinite 2s', filter: 'drop-shadow(0 15px 25px rgba(6,214,160,0.5))' }} />
+              </div>
           </div>
 
           <div style={{ maxWidth: '1100px', width: '100%', textAlign: 'center', position: 'relative', zIndex: 10 }}>
