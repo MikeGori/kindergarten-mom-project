@@ -11,6 +11,7 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה',
   const [activeTool, setActiveTool] = useState(null); // 'emoji', 'draw', 'audio'
   const [loading, setLoading] = useState(true);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   useEffect(() => {
     const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
@@ -206,9 +207,9 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה',
                   alignItems: 'center',
                   minHeight: post.type === 'emoji' ? '150px' : 'auto'
               }}>
-                {post.type === 'emoji' && <span style={{ fontSize: '5rem' }}>{post.content}</span>}
-                {post.type === 'draw' && <img src={post.content} alt="Drawing" style={{ width: '100%', height: 'auto', borderRadius: '16px', objectFit: 'contain' }} />}
-                {post.type === 'picture' && <img src={post.content} alt="Picture" style={{ width: '100%', height: 'auto', borderRadius: '16px', objectFit: 'cover' }} />}
+                {post.type === 'emoji' && <span style={{ fontSize: '5rem', cursor: 'pointer', transition: 'transform 0.2s' }} onMouseOver={e => e.target.style.transform = 'scale(1.1)'} onMouseOut={e => e.target.style.transform = 'scale(1)'} onClick={() => setSelectedPost(post)}>{post.content}</span>}
+                {post.type === 'draw' && <img src={post.content} alt="Drawing" style={{ width: '100%', height: 'auto', borderRadius: '16px', objectFit: 'contain', cursor: 'zoom-in', transition: 'filter 0.2s' }} onMouseOver={e => e.target.style.filter = 'brightness(0.9)'} onMouseOut={e => e.target.style.filter = 'brightness(1)'} onClick={() => setSelectedPost(post)} />}
+                {post.type === 'picture' && <img src={post.content} alt="Picture" style={{ width: '100%', height: 'auto', borderRadius: '16px', objectFit: 'cover', cursor: 'zoom-in', transition: 'filter 0.2s' }} onMouseOver={e => e.target.style.filter = 'brightness(0.9)'} onMouseOut={e => e.target.style.filter = 'brightness(1)'} onClick={() => setSelectedPost(post)} />}
                 {post.type === 'audio' && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
                         <button className="giant-button" style={{ width: '60px', height: '60px', background: 'var(--primary-blue)' }} aria-label="הפעל הודעה קולית" onClick={() => {
@@ -220,7 +221,7 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה',
                         <span style={{ fontWeight: 700, color: 'var(--primary-blue)' }}>הודעה קולית</span>
                     </div>
                 )}
-                {post.type === 'text' && <p style={{ fontWeight: 600 }}>{post.content}</p>}
+                {post.type === 'text' && <p style={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => setSelectedPost(post)}>{post.content}</p>}
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', borderTop: '2px dashed hsla(210, 20%, 90%, 1)', paddingTop: '1rem' }}>
@@ -246,6 +247,36 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה',
           )}
         </div>
       )}
+
+      {/* Fullscreen Post Modal */}
+      {selectedPost && selectedPost.type !== 'audio' && (
+          <div 
+            onClick={() => setSelectedPost(null)}
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', cursor: 'zoom-out', backdropFilter: 'blur(4px)' }}
+          >
+              <div style={{ position: 'relative', maxWidth: '100%', maxHeight: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+                  {selectedPost.type === 'emoji' && <span style={{ fontSize: '15rem', filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.5))' }}>{selectedPost.content}</span>}
+                  {(selectedPost.type === 'draw' || selectedPost.type === 'picture') && (
+                      <img src={selectedPost.content} alt="Enlarged Post" style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', objectFit: 'contain', background: selectedPost.type === 'draw' ? 'white' : 'transparent', border: `8px solid ${selectedPost.color}` }} />
+                  )}
+                  {selectedPost.type === 'text' && <p style={{ fontSize: '4rem', fontWeight: 900, color: 'white', textShadow: '0 4px 10px rgba(0,0,0,0.5)', textAlign: 'center' }}>{selectedPost.content}</p>}
+                  
+                  <div style={{ color: 'white', fontSize: '2rem', fontWeight: 800, textShadow: '0 4px 10px rgba(0,0,0,0.5)', background: 'rgba(0,0,0,0.3)', padding: '0.5rem 2rem', borderRadius: '99px' }}>
+                      מאת: {selectedPost.author}
+                  </div>
+              </div>
+
+              <button 
+                onClick={() => setSelectedPost(null)}
+                style={{ position: 'absolute', top: '2rem', right: '2rem', background: 'white', border: 'none', width: '60px', height: '60px', borderRadius: '50%', fontSize: '2rem', fontWeight: 'bold', color: 'black', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.4)', transition: 'transform 0.2s' }}
+                onMouseOver={e => e.target.style.transform = 'scale(1.1)'} 
+                onMouseOut={e => e.target.style.transform = 'scale(1)'}
+              >
+                  ✕
+              </button>
+          </div>
+      )}
+
     </div>
   );
 }
