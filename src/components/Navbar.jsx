@@ -5,6 +5,7 @@ const staffNav = [
   { id: 'dashboard', icon: Users, color: 'var(--primary-purple)', label: 'דשבורד' },
   { id: 'activity-manager', icon: ClipboardList, color: 'var(--primary-blue)', label: 'ניהול פעילויות' },
   { id: 'feed', icon: MessageSquare, color: 'var(--primary-green)', label: 'חברים' },
+  { id: 'mascot', icon: Star, color: 'var(--primary-yellow)', label: 'ארגמון' },
 ];
 
 const kidNav = [
