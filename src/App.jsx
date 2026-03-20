@@ -161,13 +161,25 @@ export default function App() {
                 )}
 
                 {/* Staff Entrance */}
-                <div className="card animate-pop landing-card" style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ background: 'hsla(207, 90%, 61%, 0.15)', padding: 'clamp(1.5rem, 3vh, 2.5rem)', borderRadius: '50%', width: 'clamp(100px, 15vh, 160px)', height: 'clamp(100px, 15vh, 160px)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto clamp(1rem, 3vh, 2.5rem)' }}>
-                         <GraduationCap size="60%" color="var(--primary-blue)" />
-                    </div>
-                    <h2 style={{ fontSize: 'clamp(2rem, 5vw, 2.8rem)', color: 'var(--primary-blue)', marginBottom: '1.5vh' }}>כניסת צוות</h2>
-                    
-                    {isStaffLogining ? (
+                {!isStaffLogining ? (
+                    <button 
+                        className="card animate-pop landing-card" 
+                        onClick={() => setIsStaffLogining(true)}
+                        style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', cursor: 'pointer', border: 'none', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}
+                    >
+                        <div style={{ background: 'hsla(207, 90%, 61%, 0.15)', padding: 'clamp(1.5rem, 3vh, 2.5rem)', borderRadius: '50%', width: 'clamp(100px, 15vh, 160px)', height: 'clamp(100px, 15vh, 160px)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto clamp(1rem, 3vh, 2.5rem)' }}>
+                             <GraduationCap size="60%" color="var(--primary-blue)" />
+                        </div>
+                        <h2 style={{ fontSize: 'clamp(2rem, 5vw, 2.8rem)', color: 'var(--primary-blue)', marginBottom: '1vh' }}>כניסת צוות</h2>
+                        <p style={{ fontSize: '1.3rem', color: 'var(--text-muted)', margin: 0, fontWeight: 600 }}>ניהול, הוספת תוכן והגדרות</p>
+                    </button>
+                ) : (
+                    <div className="card animate-pop landing-card" style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ background: 'hsla(207, 90%, 61%, 0.15)', padding: 'clamp(1.5rem, 3vh, 2.5rem)', borderRadius: '50%', width: 'clamp(100px, 15vh, 160px)', height: 'clamp(100px, 15vh, 160px)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto clamp(1rem, 3vh, 2.5rem)' }}>
+                             <GraduationCap size="60%" color="var(--primary-blue)" />
+                        </div>
+                        <h2 style={{ fontSize: 'clamp(2rem, 5vw, 2.8rem)', color: 'var(--primary-blue)', marginBottom: '1.5vh' }}>כניסת צוות</h2>
+                        
                         <div style={{ width: '100%', animation: 'slideUp 0.4s ease' }}>
                              <input 
                                 type="password" 
@@ -184,16 +196,8 @@ export default function App() {
                                 <button className="giant-button" onClick={() => { setIsStaffLogining(false); setError(''); }} style={{ flex: 1, background: 'var(--bg-color)', color: 'var(--text-muted)', fontSize: '1.3rem', padding: '1vh' }}>ביטול</button>
                              </div>
                         </div>
-                    ) : (
-                        <button 
-                            className="giant-button" 
-                            onClick={() => setIsStaffLogining(true)}
-                            style={{ fontSize: 'clamp(1.1rem, 3vw, 1.4rem)', padding: 'clamp(1rem, 2vh, 1.2rem) clamp(2rem, 4vw, 4rem)' }}
-                        >
-                            כניסה למערכת
-                        </button>
-                    )}
-                </div>
+                    </div>
+                )}
 
             </div>
           </div>

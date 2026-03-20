@@ -139,7 +139,7 @@ export default function VisualLogin({ onLogin }) {
   };
 
   return (
-    <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', justifyContent: 'center' }}>
+    <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', justifyContent: 'center', textAlign: 'center' }}>
       
       {step === 1 && (
         <div className="card animate-pop" style={{ textAlign: 'center', maxWidth: '800px', width: '100%' }}>
