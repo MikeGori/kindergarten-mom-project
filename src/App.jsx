@@ -6,6 +6,7 @@ import ShowAndTell from './components/ShowAndTell';
 import ActivityHub from './components/ActivityHub';
 import StaffLogin from './components/StaffLogin'; // Keeping this import as it was in the original, though the new landing page logic doesn't use it directly.
 import ActivityManager from './components/ActivityManager';
+import Mascot from './components/Mascot';
 import { getSchoolSettings, db } from './lib/firebase'; // Assuming db is exported from firebase.js
 import { onSnapshot, doc } from 'firebase/firestore';
 import { Users, Baby, GraduationCap, Sun, Star, Heart, Music, Sparkles, Cloud, Rocket, Smile } from 'lucide-react'; // Added GraduationCap and Floating Background Icons
@@ -80,6 +81,8 @@ export default function App() {
         return <ShowAndTell userRole={userRole} userName={userRole === 'staff' ? teacherName : activeKid?.name} userId={userRole === 'staff' ? 'staff' : activeKid?.id} />;
       case 'activity-manager':
         return <ActivityManager />;
+      case 'mascot':
+        return <Mascot />;
       case 'login':
         return <VisualLogin onLogin={(kid) => {
           setActiveKid(kid);

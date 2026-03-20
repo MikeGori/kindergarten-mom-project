@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Play, FileText, CheckCircle, Video, ExternalLink, Image as ImageIcon, Gamepad2, Music, Palette, BookOpen, Rocket, Star, Heart, Smile, Sun } from 'lucide-react';
 import '../index.css';
 import { db } from '../lib/firebase';
-import { collection, onSnapshot, query, where, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, addDoc, doc, updateDoc, increment } from 'firebase/firestore';
 
 export default function ActivityHub({ userRole, student }) {
   const [activities, setActivities] = useState([]);
@@ -84,6 +84,10 @@ export default function ActivityHub({ userRole, student }) {
                activityTitle: activity.title,
                timestamp: new Date()
            });
+           
+           try {
+               await updateDoc(doc(db, 'settings', 'mascot'), { totalStars: increment(1) });
+           } catch (e) { console.warn("Mascot award failed", e); }
        } catch (err) {
            console.error("Failed to log activity click", err);
        }

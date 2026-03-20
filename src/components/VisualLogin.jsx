@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Cat, Dog, Bird, Fish, Circle, Square, Triangle, Star, Volume2 } from 'lucide-react';
 import '../index.css';
 import { db } from '../lib/firebase';
-import { collection, onSnapshot, addDoc } from 'firebase/firestore';
+import { collection, onSnapshot, addDoc, doc, updateDoc, increment } from 'firebase/firestore';
 
 const SHAPES = [
   { id: 'circle', icon: Circle, color: 'var(--primary-red)' },
@@ -41,6 +41,10 @@ export default function VisualLogin({ onLogin }) {
         studentName,
         timestamp: new Date()
       });
+      
+      try {
+          await updateDoc(doc(db, 'settings', 'mascot'), { totalStars: increment(1) });
+      } catch (e) { console.warn("Mascot award failed", e); }
     } catch (err) {
       console.error("Attendance log failed:", err);
     }

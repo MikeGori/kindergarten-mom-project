@@ -45,6 +45,13 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה',
     try {
       await addDoc(collection(db, 'posts'), newPost);
       setActiveTool(null);
+      
+      // Award star to global Mascot!
+      try {
+          await updateDoc(doc(db, 'settings', 'mascot'), { totalStars: increment(1) });
+      } catch (e) {
+          console.warn("Failed to award mascot star", e);
+      }
     } catch (err) {
       console.error("Error adding post:", err);
       alert("אופס! משהו השתבש בשליחה.");

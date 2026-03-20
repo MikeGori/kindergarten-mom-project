@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogIn, LayoutGrid, Users, MessageSquare, ClipboardList } from 'lucide-react';
+import { LogIn, LayoutGrid, Users, MessageSquare, ClipboardList, Star } from 'lucide-react';
 
 const staffNav = [
   { id: 'dashboard', icon: Users, color: 'var(--primary-purple)', label: 'דשבורד' },
@@ -10,6 +10,7 @@ const staffNav = [
 const kidNav = [
   { id: 'learning', icon: LayoutGrid, color: 'var(--primary-blue)', label: 'משחקים' },
   { id: 'feed', icon: MessageSquare, color: 'var(--primary-green)', label: 'חברים' },
+  { id: 'mascot', icon: Star, color: 'var(--primary-yellow)', label: 'ארגמון' },
 ];
 
 export default function Navbar({ currentView, setView, userRole }) {
