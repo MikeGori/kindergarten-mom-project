@@ -150,7 +150,7 @@ export default function App() {
                   <button 
                       className="card animate-pop landing-card" 
                       onClick={() => { setUserRole('student'); setCurrentView('login'); }}
-                      style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', cursor: 'pointer', border: 'none', background: 'white', position: 'relative', overflow: 'hidden' }}
+                      style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', cursor: 'pointer', border: 'none', background: 'white', position: 'relative', overflow: 'hidden', textAlign: 'center' }}
                   >
                       <div style={{ background: 'hsla(122, 39%, 57%, 0.15)', padding: 'clamp(1.5rem, 3vh, 2.5rem)', borderRadius: '50%', width: 'clamp(100px, 15vh, 160px)', height: 'clamp(100px, 15vh, 160px)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto clamp(1rem, 3vh, 2.5rem)' }}>
                            <Baby size="60%" color="var(--primary-green)" />
@@ -165,7 +165,7 @@ export default function App() {
                     <button 
                         className="card animate-pop landing-card" 
                         onClick={() => setIsStaffLogining(true)}
-                        style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', cursor: 'pointer', border: 'none', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}
+                        style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', cursor: 'pointer', border: 'none', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', textAlign: 'center' }}
                     >
                         <div style={{ background: 'hsla(207, 90%, 61%, 0.15)', padding: 'clamp(1.5rem, 3vh, 2.5rem)', borderRadius: '50%', width: 'clamp(100px, 15vh, 160px)', height: 'clamp(100px, 15vh, 160px)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto clamp(1rem, 3vh, 2.5rem)' }}>
                              <GraduationCap size="60%" color="var(--primary-blue)" />
@@ -174,7 +174,7 @@ export default function App() {
                         <p style={{ fontSize: '1.3rem', color: 'var(--text-muted)', margin: 0, fontWeight: 600 }}>ניהול, הוספת תוכן והגדרות</p>
                     </button>
                 ) : (
-                    <div className="card animate-pop landing-card" style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="card animate-pop landing-card" style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
                         <div style={{ background: 'hsla(207, 90%, 61%, 0.15)', padding: 'clamp(1.5rem, 3vh, 2.5rem)', borderRadius: '50%', width: 'clamp(100px, 15vh, 160px)', height: 'clamp(100px, 15vh, 160px)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto clamp(1rem, 3vh, 2.5rem)' }}>
                              <GraduationCap size="60%" color="var(--primary-blue)" />
                         </div>
