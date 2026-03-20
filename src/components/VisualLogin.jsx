@@ -21,8 +21,10 @@ export default function VisualLogin({ onLogin }) {
   const [regSequence, setRegSequence] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // No longer managing registration states locally
-
+  // Registration states
+  const [regName, setRegName] = useState('');
+  const [regIcon, setRegIcon] = useState('Cat');
+  const [regColor, setRegColor] = useState('var(--primary-blue)');
   React.useEffect(() => {
     const unsub = onSnapshot(collection(db, 'students'), (snapshot) => {
       const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -43,9 +45,31 @@ export default function VisualLogin({ onLogin }) {
       console.error("Attendance log failed:", err);
     }
   };
+  const handleRegister = async () => {
+    if (!regName || regSequence.length < 2) return;
+    
+    const newStudent = {
+      name: regName,
+      icon: regIcon,
+      color: regColor,
+      secret_sequence: regSequence,
+      createdAt: new Date()
+    };
 
-
-
+    try {
+      const docRef = await addDoc(collection(db, 'students'), newStudent);
+      await logAttendance(docRef.id, newStudent.name);
+      
+      // Limit to 1 registration per device!
+      localStorage.setItem('hasRegisteredKidy', 'true');
+      
+      // Auto-login: Pass the new student object (with ID) to mother component
+      if (onLogin) onLogin({ id: docRef.id, ...newStudent });
+    } catch (err) {
+      console.error("Registration failed:", err);
+      alert("אופס! משהו השתבש בהרשמה.");
+    }
+  };
   const playAudioCue = (type) => {
     // Lead PM: Using Web Audio API for synthetic sounds (no external assets needed yet)
     try {
@@ -85,6 +109,13 @@ export default function VisualLogin({ onLogin }) {
 
   const handleShapeClick = (shape) => {
     playAudioCue(shape.id);
+
+    if (step === 5) {
+        // Setting registration password
+        const newRegSeq = [...regSequence, shape.id];
+        setRegSequence(newRegSeq);
+        return;
+    }
 
     // Normal Login
     const newSeq = [...sequence, shape.id];
@@ -140,9 +171,144 @@ export default function VisualLogin({ onLogin }) {
                   );
                 })}
                 
+                {/* Registration Trigger - Only shown if this device hasn't registered a kid yet */}
+                {!localStorage.getItem('hasRegisteredKidy') && (
+                  <button
+                    className="giant-button"
+                    style={{ width: '100%', height: '160px', flexDirection: 'column', gap: '1rem', background: 'var(--primary-green)', color: 'white' }}
+                    onClick={() => setStep(4)}
+                    aria-label="תלמיד חדש? הצטרף אלינו"
+                  >
+                    <div style={{ fontSize: '3rem' }}>+</div>
+                    <span style={{ fontSize: '1.2rem', fontWeight: '700' }}>חבר חדש</span>
+                  </button>
+                )}
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {step === 4 && (
+        <div className="card animate-pop" style={{ textAlign: 'center', maxWidth: '600px', width: '100%' }}>
+          <h1>ברוכים הבאים!</h1>
+          <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>בואו נכיר חבר חדש</p>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', alignItems: 'center' }}>
+            <input 
+              type="text" 
+              placeholder="איך קוראים לך?" 
+              value={regName}
+              onChange={(e) => setRegName(e.target.value)}
+              style={{ padding: '1.5rem', borderRadius: '24px', border: '4px solid var(--primary-blue)', fontSize: '1.5rem', textAlign: 'center', width: '100%', outline: 'none' }}
+            />
+            
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              {Object.keys(ICONS).map(iconName => (
+                <button 
+                  key={iconName}
+                  onClick={() => setRegIcon(iconName)}
+                  style={{ padding: '1rem', borderRadius: '16px', border: regIcon === iconName ? '4px solid var(--primary-yellow)' : 'none', background: 'white', cursor: 'pointer' }}
+                >
+                  {React.createElement(ICONS[iconName], { size: 48, color: 'var(--primary-blue)' })}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              {['var(--primary-blue)', 'var(--primary-red)', 'var(--primary-green)', 'var(--primary-yellow)'].map(color => (
+                <button 
+                  key={color}
+                  onClick={() => setRegColor(color)}
+                  style={{ width: '50px', height: '50px', borderRadius: '50%', background: color, border: regColor === color ? '4px solid white' : 'none', cursor: 'pointer', boxShadow: 'var(--shadow-soft)' }}
+                />
+              ))}
+            </div>
+
+            <button 
+              className="giant-button" 
+              style={{ background: 'var(--primary-blue)', color: 'white', width: '100%', marginTop: '1rem' }}
+              onClick={() => setStep(5)}
+              disabled={!regName}
+            >
+              המשך לצייר סיסמה ←
+            </button>
+            
+            <button 
+              style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+              onClick={() => setStep(1)}
+            >
+              ← ביטול
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 5 && (
+        <div className="card animate-pop" style={{ textAlign: 'center', maxWidth: '600px', width: '100%' }}>
+          <h1>הסיסמה הסודית שלך</h1>
+          <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>תבחר שני צורות שאתה אוהב!</p>
+          
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginBottom: '3rem' }}>
+            {[0, 1].map((i) => (
+              <div 
+                key={i}
+                onClick={() => i < regSequence.length && setRegSequence(regSequence.slice(0, i))}
+                style={{ 
+                  width: '90px', 
+                  height: '90px', 
+                  borderRadius: '24px', 
+                  background: 'white', 
+                  border: regSequence[i] ? '4px solid var(--primary-green)' : '4px dashed hsl(122, 39%, 80%)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  cursor: regSequence[i] ? 'pointer' : 'default'
+                }}
+              >
+                {regSequence[i] && (
+                  (() => {
+                    const ShapeIcon = SHAPES.find(s => s.id === regSequence[i]).icon;
+                    const shapeColor = SHAPES.find(s => s.id === regSequence[i]).color;
+                    return <ShapeIcon size={48} color={shapeColor} />;
+                  })()
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="grid-container" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', maxWidth: '400px', margin: '0 auto' }}>
+            {SHAPES.map((shape) => (
+              <button
+                key={shape.id}
+                className="giant-button"
+                style={{ width: '100%', height: '140px', borderRadius: '32px' }}
+                onClick={() => handleShapeClick(shape)}
+                disabled={regSequence.length >= 2}
+                aria-label={`בחר ${shape.id === 'circle' ? 'עיגול' : shape.id === 'square' ? 'ריבוע' : shape.id === 'triangle' ? 'משולש' : 'כוכב'}`}
+                data-testid={`reg-shape-button-${shape.id}`}
+              >
+                <shape.icon size={64} color={shape.color} />
+              </button>
+            ))}
+          </div>
+
+          {regSequence.length === 2 && (
+             <button 
+                className="giant-button" 
+                style={{ background: 'var(--primary-green)', color: 'white', width: '100%', marginTop: '3rem' }}
+                onClick={handleRegister}
+              >
+                זהו, הצטרפתי! 🎉
+              </button>
+          )}
+          
+          <button 
+            style={{ marginTop: '2rem', padding: '1rem 2rem', fontSize: '1.2rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 'bold' }}
+            onClick={() => { setStep(4); setRegSequence([]); }}
+          >
+            ← חזרה
+          </button>
         </div>
       )}
 
