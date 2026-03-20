@@ -102,7 +102,7 @@ export default function ActivityHub({ userRole, student }) {
         return (
           <div 
              key={activity.id} 
-             className="card animate-pop" 
+             className="card animate-pop activity-card" 
              onClick={() => handleActivityClick(activity)}
              style={{ 
                  position: 'relative', 
@@ -121,7 +121,7 @@ export default function ActivityHub({ userRole, student }) {
              }}
           >
             {/* Background Layer */}
-            <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+            <div className="card-bg-layer" style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
                {activity.bgImage ? (
                    <img src={activity.bgImage} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                ) : (
@@ -144,14 +144,14 @@ export default function ActivityHub({ userRole, student }) {
             )}
 
             {/* Floating Play Button */}
-            <div style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+            <div className="floating-icon" style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
                <div style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)', width: '90px', height: '90px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 15px 40px ${displayColor}80` }}>
                    <Play size={45} fill={displayColor} color={displayColor} style={{ marginLeft: '6px' }} />
                </div>
             </div>
 
             {/* Title Glass Bar */}
-            <div style={{ position: 'relative', zIndex: 2, padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="card-title-bar" style={{ position: 'relative', zIndex: 2, padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                <h2 style={{ margin: 0, fontSize: '2rem', fontWeight: 900, color: 'white', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
                    {activity.title}
                </h2>
@@ -176,7 +176,7 @@ export default function ActivityHub({ userRole, student }) {
           return (
           <div 
              key={activity.id} 
-             className="card animate-pop" 
+             className="card animate-pop activity-card" 
              onClick={() => handleActivityClick(activity)}
              style={{ 
                  position: 'relative', 
@@ -194,7 +194,7 @@ export default function ActivityHub({ userRole, student }) {
              }}
           >
             {/* Background Layer */}
-            <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+            <div className="card-bg-layer" style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
                {(activity.bgImage || activity.type === 'image') ? (
                    <img src={activity.bgImage || activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                ) : (
@@ -217,14 +217,14 @@ export default function ActivityHub({ userRole, student }) {
             )}
 
             {/* Center Interactive Icon */}
-            <div style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+            <div className="floating-icon" style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
                <div style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', width: '80px', height: '80px', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 15px 30px ${displayColor}70`, transform: 'rotate(-8deg)' }}>
                    <TypeIcon size={45} color={displayColor} />
                </div>
             </div>
 
             {/* Glass Title Bar */}
-            <div style={{ position: 'relative', zIndex: 2, padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}>
+            <div className="card-title-bar" style={{ position: 'relative', zIndex: 2, padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}>
                <h3 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 900, color: 'white', textShadow: '0 2px 8px rgba(0,0,0,0.8)', textAlign: 'center', width: '100%', lineHeight: 1.2 }}>
                    {activity.title}
                </h3>
