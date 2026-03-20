@@ -190,39 +190,46 @@ export default function App() {
   }
 
   return (
-    <div className="app-container" dir="rtl">
-      {showNavbar && (
-        <header className="app-header animate-pop" style={{ position: 'sticky', top: 0, zIndex: 1000, margin: '0.5rem 1rem', borderRadius: '12px', padding: '0.5rem 1.5rem' }}>
-           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-             <div className="avatar-small" style={{ background: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)', padding: '0.5rem', width: '40px', height: '40px', borderRadius: '12px' }}>
-               {userRole === 'staff' ? <GraduationCap size={20} color="white" /> : <Baby size={20} color="white" />}
-             </div>
-             <div style={{ textAlign: 'right' }}>
-               <h2 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 800 }}>{schoolName}</h2>
-               <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: 0, fontWeight: 600 }}>
-                 שלום, <span style={{ color: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)' }}>{userRole === 'staff' ? teacherName : activeKid?.name}</span>
-               </p>
-             </div>
-           </div>
-           <button onClick={handleExit} className="giant-button" style={{ width: 'auto', height: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'hsla(1, 83%, 63%, 0.1)', color: 'var(--primary-red)', border: 'none', borderRadius: '10px' }}>
-             יציאה 🚪
-           </button>
-        </header>
-      )}
+    <div className="app-container" dir="rtl" style={{ minHeight: '100vh', position: 'relative', overflowX: 'hidden' }}>
+      {/* Global Vibrant Background Blobs */}
+      <div style={{ position: 'fixed', top: '-10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(255,209,102,0.15) 0%, rgba(255,209,102,0) 70%)', filter: 'blur(40px)', animation: 'float 8s ease-in-out infinite', zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', bottom: '-20%', right: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(17,138,178,0.1) 0%, rgba(17,138,178,0) 70%)', filter: 'blur(60px)', animation: 'float 12s ease-in-out infinite reverse', zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', top: '15%', right: '5%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(239,71,111,0.08) 0%, rgba(239,71,111,0) 70%)', filter: 'blur(50px)', animation: 'float 10s ease-in-out infinite 2s', zIndex: 0, pointerEvents: 'none' }} />
 
-      {showNavbar && <Navbar currentView={currentView} setView={setCurrentView} userRole={userRole} />}
+      <div style={{ position: 'relative', zIndex: 10, paddingBottom: '2rem' }}>
+          {showNavbar && (
+            <header className="app-header animate-pop" style={{ position: 'sticky', top: 0, zIndex: 1000, margin: '0.5rem 1rem', borderRadius: '12px', padding: '0.5rem 1.5rem' }}>
+               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                 <div className="avatar-small" style={{ background: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)', padding: '0.5rem', width: '40px', height: '40px', borderRadius: '12px' }}>
+                   {userRole === 'staff' ? <GraduationCap size={20} color="white" /> : <Baby size={20} color="white" />}
+                 </div>
+                 <div style={{ textAlign: 'right' }}>
+                   <h2 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 800 }}>{schoolName}</h2>
+                   <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: 0, fontWeight: 600 }}>
+                     שלום, <span style={{ color: userRole === 'staff' ? 'var(--primary-blue)' : 'var(--primary-green)' }}>{userRole === 'staff' ? teacherName : activeKid?.name}</span>
+                   </p>
+                 </div>
+               </div>
+               <button onClick={handleExit} className="giant-button" style={{ width: 'auto', height: 'auto', padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'hsla(1, 83%, 63%, 0.1)', color: 'var(--primary-red)', border: 'none', borderRadius: '10px' }}>
+                 יציאה 🚪
+               </button>
+            </header>
+          )}
 
-      <main style={{ marginTop: '1rem' }}>
-        {renderView()}
-      </main>
+          {showNavbar && <Navbar currentView={currentView} setView={setCurrentView} userRole={userRole} />}
 
-      {/* Floating Info for staff when in non-dashboard views */}
-      {userRole === 'staff' && currentView !== 'dashboard' && (
-          <div style={{ position: 'fixed', bottom: '6rem', left: '2rem', background: 'white', padding: '0.75rem 1.5rem', borderRadius: '30px', boxShadow: 'var(--shadow-soft)', display: 'flex', alignItems: 'center', gap: '0.5rem', border: '2px solid var(--primary-blue)', zIndex: 100 }}>
-              <Users size={20} color="var(--primary-blue)" />
-              <span style={{ fontWeight: 700 }}>מצב עריכה: {teacherName}</span>
-          </div>
-      )}
+          <main style={{ marginTop: '1rem' }}>
+            {renderView()}
+          </main>
+
+          {/* Floating Info for staff when in non-dashboard views */}
+          {userRole === 'staff' && currentView !== 'dashboard' && (
+              <div style={{ position: 'fixed', bottom: '6rem', left: '2rem', background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(12px)', padding: '0.75rem 1.5rem', borderRadius: '30px', boxShadow: 'var(--shadow-soft)', display: 'flex', alignItems: 'center', gap: '0.5rem', border: '2px solid var(--primary-blue)', zIndex: 100 }}>
+                  <Users size={20} color="var(--primary-blue)" />
+                  <span style={{ fontWeight: 700 }}>מצב עריכה: {teacherName}</span>
+              </div>
+          )}
+      </div>
     </div>
   );
 }
