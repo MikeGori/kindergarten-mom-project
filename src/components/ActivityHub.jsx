@@ -219,26 +219,41 @@ export default function ActivityHub({ userRole, student }) {
       {/* Web IFrame Sandbox Modal */}
       {activeIframe && (
           <div 
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 9999, display: 'flex', flexDirection: 'column' }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(255, 255, 255, 0.4)', backdropFilter: 'blur(10px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
           >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 2rem', background: 'var(--primary-blue)', color: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.3)', zIndex: 10 }} dir="rtl">
-                  <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 900 }}>{activeIframe.title}</h2>
-                  <button 
-                    onClick={() => setActiveIframe(null)}
-                    className="giant-button animate-pop"
-                    style={{ background: 'var(--primary-red)', border: 'none', color: 'white', fontSize: '1.3rem', padding: '0.5rem 2.5rem', height: 'auto', borderRadius: '30px', boxShadow: '0 4px 15px rgba(255,0,0,0.4)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                  >
-                    חזרה לגן ✕
-                  </button>
-              </div>
-              <div style={{ flex: 1, backgroundColor: 'white', overflow: 'hidden' }}>
-                  <iframe 
-                    src={activeIframe.url} 
-                    title={activeIframe.title}
-                    style={{ width: '100%', height: '100%', border: 'none' }} 
-                    allow="autoplay; encrypted-media; fullscreen"
-                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                  />
+              <div className="card animate-pop" style={{ width: '100%', maxWidth: '900px', height: 'auto', minHeight: '60vh', maxHeight: '90vh', display: 'flex', flexDirection: 'column', background: 'rgba(255,255,255,0.9)', padding: '1.5rem', overflow: 'hidden', borderRadius: '32px', border: '4px solid var(--primary-blue)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }} dir="rtl">
+                      <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 900, color: 'var(--primary-blue)' }}>{activeIframe.title}</h2>
+                      <button 
+                         onClick={() => setActiveIframe(null)}
+                         style={{ background: '#ffebee', border: 'none', color: 'var(--primary-red)', width: '50px', height: '50px', borderRadius: '50%', fontSize: '1.5rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: 'var(--shadow-soft)' }}
+                      >
+                         ✕
+                      </button>
+                  </div>
+
+                  <div style={{ flex: 1, backgroundColor: 'black', width: '100%', borderRadius: '24px', overflow: 'hidden', border: '4px solid #333' }}>
+                      <iframe 
+                        src={activeIframe.url} 
+                        title={activeIframe.title}
+                        style={{ width: '100%', height: '100%', border: 'none' }} 
+                        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                        allowFullScreen
+                      />
+                  </div>
+                  
+                  <div style={{ paddingTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+                     <button 
+                        onClick={() => setActiveIframe(null)}
+                        className="giant-button"
+                        style={{ background: 'var(--primary-red)', border: 'none', color: 'white', fontSize: '1.3rem', padding: '1rem 3rem', height: 'auto', borderRadius: '30px', display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', maxWidth: '400px' }}
+                      >
+                        סיימתי, חזרה למרכז הלמידה 🏠
+                      </button>
+                  </div>
+
               </div>
           </div>
       )}
