@@ -6,7 +6,7 @@ import AudioRecorder from './AudioRecorder';
 import { db } from '../lib/firebase';
 import '../index.css';
 
-export default function ShowAndTell({ userRole = 'student', userName = 'מיה' }) {
+export default function ShowAndTell({ userRole = 'student', userName = 'מיה', userId = null }) {
   const [posts, setPosts] = useState([]);
   const [activeTool, setActiveTool] = useState(null); // 'emoji', 'draw', 'audio'
   const [loading, setLoading] = useState(true);
@@ -32,6 +32,7 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
     const newPost = {
       author: userName,
       role: userRole,
+      authorId: userId,
       type: type,
       content: content,
       likes: 0,
@@ -145,7 +146,7 @@ export default function ShowAndTell({ userRole = 'student', userName = 'מיה' 
             <div key={post.id} className="card animate-pop" style={{ borderTop: `12px solid ${post.color}`, padding: '1.5rem', position: 'relative' }}>
               
               {/* Moderation Tool */}
-              {(userRole === 'staff' || userRole === 'teacher' || post.author === userName) && (
+              {(userRole === 'staff' || userRole === 'teacher' || (userRole === 'student' && ((post.authorId && post.authorId === userId) || (!post.authorId && post.author === userName && userName)))) && (
                   <div style={{ position: 'absolute', top: '1rem', left: '1rem', zIndex: 10 }}>
                       {confirmDeleteId === post.id ? (
                           <div style={{ display: 'flex', gap: '0.5rem', background: 'white', padding: '0.5rem', borderRadius: '12px', boxShadow: 'var(--shadow-soft)', border: '2px solid var(--primary-red)' }}>

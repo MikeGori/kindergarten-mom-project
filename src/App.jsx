@@ -64,7 +64,7 @@ export default function App() {
         return <ActivityHub userRole={userRole} student={activeKid} />;
       case 'feed':
       case 'friends': // alias
-        return <ShowAndTell userRole={userRole} userName={userRole === 'staff' ? teacherName : activeKid?.name} />;
+        return <ShowAndTell userRole={userRole} userName={userRole === 'staff' ? teacherName : activeKid?.name} userId={userRole === 'staff' ? 'staff' : activeKid?.id} />;
       case 'activity-manager':
         return <ActivityManager />;
       case 'login':
