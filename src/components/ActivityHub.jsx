@@ -9,6 +9,7 @@ export default function ActivityHub({ userRole, student }) {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedAudio, setSelectedAudio] = useState(null);
+  const [activeIframe, setActiveIframe] = useState(null);
 
   useEffect(() => {
     const q = query(collection(db, 'activities'), where('active', '==', true));
@@ -35,7 +36,7 @@ export default function ActivityHub({ userRole, student }) {
     } else if (activity.type === 'audio') {
        setSelectedAudio({ url: activity.url, title: activity.title, bgImage: activity.bgImage || null });
     } else {
-       window.open(activity.url, '_blank');
+       setActiveIframe({ url: activity.url, title: activity.title });
     }
     
     if (userRole === 'student' && student) {
@@ -185,13 +186,40 @@ export default function ActivityHub({ userRole, student }) {
                     autoPlay 
                     style={{ width: '100%', outline: 'none' }}
                  />
-                 <button 
+                  <button 
                    onClick={() => setSelectedAudio(null)}
                    className="giant-button"
                    style={{ width: '100%', height: 'auto', padding: '1rem', marginTop: '2rem', background: '#ffebee', color: 'var(--primary-red)', fontSize: '1.2rem', fontWeight: 'bold' }}
                  >
                    סגור שיר
                  </button>
+              </div>
+          </div>
+      )}
+
+      {/* Web IFrame Sandbox Modal */}
+      {activeIframe && (
+          <div 
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 9999, display: 'flex', flexDirection: 'column' }}
+          >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 2rem', background: 'var(--primary-blue)', color: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.3)', zIndex: 10 }} dir="rtl">
+                  <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 900 }}>{activeIframe.title}</h2>
+                  <button 
+                    onClick={() => setActiveIframe(null)}
+                    className="giant-button animate-pop"
+                    style={{ background: 'var(--primary-red)', border: 'none', color: 'white', fontSize: '1.3rem', padding: '0.5rem 2.5rem', height: 'auto', borderRadius: '30px', boxShadow: '0 4px 15px rgba(255,0,0,0.4)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    חזרה לגן ✕
+                  </button>
+              </div>
+              <div style={{ flex: 1, backgroundColor: 'white', overflow: 'hidden' }}>
+                  <iframe 
+                    src={activeIframe.url} 
+                    title={activeIframe.title}
+                    style={{ width: '100%', height: '100%', border: 'none' }} 
+                    allow="autoplay; encrypted-media; fullscreen"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                  />
               </div>
           </div>
       )}
