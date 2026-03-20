@@ -138,8 +138,11 @@ export default function App() {
           </div>
 
           <div style={{ maxWidth: '1200px', width: '100%', textAlign: 'center', position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-            <h1 className="animate-pop" style={{ fontSize: 'clamp(3.5rem, 8vw, 6rem)', color: 'var(--primary-blue)', marginBottom: '1vh', fontWeight: 900, textShadow: '0 4px 20px rgba(255,255,255,0.8)' }}>
-              {schoolName} ✨
+            <h1 className="animate-pop" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', fontSize: 'clamp(3.5rem, 8vw, 6rem)', color: 'var(--primary-blue)', marginBottom: '1vh', fontWeight: 900, textShadow: '0 4px 20px rgba(255,255,255,0.8)' }}>
+              {schoolName}
+              <div style={{ display: 'inline-flex', animation: 'float 4s ease-in-out infinite' }}>
+                  <Sparkles size="1em" color="var(--primary-yellow)" fill="var(--primary-yellow)" style={{ filter: 'drop-shadow(0 4px 10px rgba(255,209,102,0.6))' }} />
+              </div>
             </h1>
             <p style={{ fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', color: 'var(--text-main)', marginBottom: 'clamp(2rem, 6vh, 5rem)', fontWeight: 800, textShadow: '0 2px 4px rgba(255,255,255,0.7)' }}>ברוכים הבאים לעולם הלמידה שלנו!</p>
             
