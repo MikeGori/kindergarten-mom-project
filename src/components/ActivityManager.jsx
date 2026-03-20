@@ -16,7 +16,12 @@ export default function ActivityManager() {
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'activities'), (snap) => {
-      setActivities(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      const loadedActivities = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => {
+          const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+          const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+          return timeB - timeA;
+      });
+      setActivities(loadedActivities);
       setLoading(false);
     }, (err) => {
       console.error(err);
