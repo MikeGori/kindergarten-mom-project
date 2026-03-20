@@ -125,35 +125,35 @@ export default function App() {
               </div>
           </div>
 
-          <div style={{ maxWidth: '1100px', width: '100%', textAlign: 'center', position: 'relative', zIndex: 10 }}>
-            <h1 className="animate-pop" style={{ fontSize: '6rem', color: 'var(--primary-blue)', marginBottom: '1rem', fontWeight: 900, textShadow: '0 4px 20px rgba(255,255,255,0.8)' }}>
+          <div style={{ maxWidth: '1200px', width: '100%', textAlign: 'center', position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+            <h1 className="animate-pop" style={{ fontSize: 'clamp(3.5rem, 8vw, 6rem)', color: 'var(--primary-blue)', marginBottom: '1vh', fontWeight: 900, textShadow: '0 4px 20px rgba(255,255,255,0.8)' }}>
               {schoolName} ✨
             </h1>
-            <p style={{ fontSize: '1.8rem', color: 'var(--text-main)', marginBottom: '5rem', fontWeight: 800, textShadow: '0 2px 4px rgba(255,255,255,0.7)' }}>ברוכים הבאים לעולם הלמידה שלנו!</p>
+            <p style={{ fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', color: 'var(--text-main)', marginBottom: 'clamp(2rem, 6vh, 5rem)', fontWeight: 800, textShadow: '0 2px 4px rgba(255,255,255,0.7)' }}>ברוכים הבאים לעולם הלמידה שלנו!</p>
             
-            <div className="grid-container" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '3rem' }}>
+            <div className="grid-container" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'clamp(1.5rem, 4vh, 3rem)', width: '100%', maxWidth: '900px' }}>
                 
                 {/* Student Entrance */}
                 {!isStaffLogining && (
                   <button 
                       className="card animate-pop landing-card" 
                       onClick={() => { setUserRole('student'); setCurrentView('login'); }}
-                      style={{ padding: '4rem 2rem', cursor: 'pointer', border: 'none', background: 'white', position: 'relative', overflow: 'hidden' }}
+                      style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', cursor: 'pointer', border: 'none', background: 'white', position: 'relative', overflow: 'hidden' }}
                   >
-                      <div style={{ background: 'hsla(122, 39%, 57%, 0.15)', padding: '2.5rem', borderRadius: '50%', width: '160px', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2.5rem' }}>
-                           <Baby size={80} color="var(--primary-green)" />
+                      <div style={{ background: 'hsla(122, 39%, 57%, 0.15)', padding: 'clamp(1.5rem, 3vh, 2.5rem)', borderRadius: '50%', width: 'clamp(100px, 15vh, 160px)', height: 'clamp(100px, 15vh, 160px)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto clamp(1rem, 3vh, 2.5rem)' }}>
+                           <Baby size="60%" color="var(--primary-green)" />
                       </div>
-                      <h2 style={{ fontSize: '2.8rem', color: 'var(--primary-green)', marginBottom: '1rem' }}>כניסת ילדים</h2>
+                      <h2 style={{ fontSize: 'clamp(2rem, 5vw, 2.8rem)', color: 'var(--primary-green)', marginBottom: '1vh' }}>כניסת ילדים</h2>
                       <p style={{ fontSize: '1.3rem', color: 'var(--text-muted)', margin: 0, fontWeight: 600 }}>משחקים, יצירה וחברים</p>
                   </button>
                 )}
 
                 {/* Staff Entrance */}
-                <div className="card animate-pop landing-card" style={{ padding: '4rem 2rem', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div style={{ background: 'hsla(207, 90%, 61%, 0.15)', padding: '2.5rem', borderRadius: '50%', width: '160px', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2.5rem' }}>
-                         <GraduationCap size={80} color="var(--primary-blue)" />
+                <div className="card animate-pop landing-card" style={{ padding: 'clamp(2rem, 4vh, 4rem) 2rem', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ background: 'hsla(207, 90%, 61%, 0.15)', padding: 'clamp(1.5rem, 3vh, 2.5rem)', borderRadius: '50%', width: 'clamp(100px, 15vh, 160px)', height: 'clamp(100px, 15vh, 160px)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto clamp(1rem, 3vh, 2.5rem)' }}>
+                         <GraduationCap size="60%" color="var(--primary-blue)" />
                     </div>
-                    <h2 style={{ fontSize: '2.8rem', color: 'var(--primary-blue)', marginBottom: '1.5rem' }}>כניסת צוות</h2>
+                    <h2 style={{ fontSize: 'clamp(2rem, 5vw, 2.8rem)', color: 'var(--primary-blue)', marginBottom: '1.5vh' }}>כניסת צוות</h2>
                     
                     {isStaffLogining ? (
                         <div style={{ width: '100%', animation: 'slideUp 0.4s ease' }}>
@@ -164,19 +164,19 @@ export default function App() {
                                 onChange={(e) => setStaffPassInput(e.target.value)}
                                 autoFocus
                                 onKeyDown={(e) => e.key === 'Enter' && handleStaffLogin()}
-                                style={{ width: '100%', padding: '1.2rem', borderRadius: '20px', border: '3px solid var(--primary-blue)', fontSize: '1.4rem', textAlign: 'center', marginBottom: '1.5rem', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}
+                                style={{ width: '100%', padding: 'clamp(0.8rem, 2vh, 1.2rem)', borderRadius: '20px', border: '3px solid var(--primary-blue)', fontSize: '1.4rem', textAlign: 'center', marginBottom: '1vh', outline: 'none', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}
                              />
-                             {error && <p style={{ color: 'var(--primary-red)', fontWeight: 800, marginBottom: '1.5rem', fontSize: '1.1rem' }}>{error}</p>}
+                             {error && <p style={{ color: 'var(--primary-red)', fontWeight: 800, marginBottom: '1vh', fontSize: '1.1rem' }}>{error}</p>}
                              <div style={{ display: 'flex', gap: '1.2rem', width: '100%' }}>
-                                <button className="giant-button" onClick={handleStaffLogin} style={{ flex: 1.5, fontSize: '1.3rem', padding: '1.2rem' }}>אישור ✅</button>
-                                <button className="giant-button" onClick={() => { setIsStaffLogining(false); setError(''); }} style={{ flex: 1, background: 'var(--bg-color)', color: 'var(--text-muted)', fontSize: '1.3rem', padding: '1.2rem' }}>ביטול</button>
+                                <button className="giant-button" onClick={handleStaffLogin} style={{ flex: 1.5, fontSize: '1.3rem', padding: '1vh' }}>אישור ✅</button>
+                                <button className="giant-button" onClick={() => { setIsStaffLogining(false); setError(''); }} style={{ flex: 1, background: 'var(--bg-color)', color: 'var(--text-muted)', fontSize: '1.3rem', padding: '1vh' }}>ביטול</button>
                              </div>
                         </div>
                     ) : (
                         <button 
                             className="giant-button" 
                             onClick={() => setIsStaffLogining(true)}
-                            style={{ fontSize: '1.4rem', padding: '1.2rem 4rem' }}
+                            style={{ fontSize: 'clamp(1.1rem, 3vw, 1.4rem)', padding: 'clamp(1rem, 2vh, 1.2rem) clamp(2rem, 4vw, 4rem)' }}
                         >
                             כניסה למערכת
                         </button>
