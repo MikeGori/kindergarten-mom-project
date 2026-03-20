@@ -123,7 +123,7 @@ export default function ActivityHub({ userRole, student }) {
             {/* Background Layer */}
             <div className="card-bg-layer" style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
                {activity.bgImage ? (
-                   <img src={activity.bgImage} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                   <img src={activity.bgImage} alt={activity.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                ) : (
                    <div style={{ width: '100%', height: '100%', background: `radial-gradient(circle at 50% 50%, ${displayColor}30, ${displayColor}10)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                        <Video size={140} color={displayColor} style={{ opacity: 0.2 }} />
@@ -145,7 +145,7 @@ export default function ActivityHub({ userRole, student }) {
 
             {/* Floating Play Button */}
             <div className="floating-icon" style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-               <div style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)', width: '90px', height: '90px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 15px 40px ${displayColor}80` }}>
+               <div style={{ background: 'rgba(255,255,255,0.95)', width: '90px', height: '90px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
                    <Play size={45} fill={displayColor} color={displayColor} style={{ marginLeft: '6px' }} />
                </div>
             </div>
@@ -155,7 +155,7 @@ export default function ActivityHub({ userRole, student }) {
                <h2 style={{ margin: 0, fontSize: '2rem', fontWeight: 900, color: 'white', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
                    {activity.title}
                </h2>
-               <div style={{ background: 'rgba(255,255,255,0.25)', padding: '0.6rem', borderRadius: '16px', backdropFilter: 'blur(8px)' }}>
+               <div style={{ background: 'rgba(255,255,255,0.25)', padding: '0.6rem', borderRadius: '16px' }}>
                    <TypeIcon size={32} color="white" />
                </div>
             </div>
@@ -196,7 +196,7 @@ export default function ActivityHub({ userRole, student }) {
             {/* Background Layer */}
             <div className="card-bg-layer" style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
                {(activity.bgImage || activity.type === 'image') ? (
-                   <img src={activity.bgImage || activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                   <img src={activity.bgImage || activity.url} alt={activity.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                ) : (
                    <div style={{ width: '100%', height: '100%', background: `radial-gradient(circle at 50% 50%, ${displayColor}30, ${displayColor}10)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                        <TypeIcon size={120} color={displayColor} style={{ opacity: 0.4 }} />
@@ -218,7 +218,7 @@ export default function ActivityHub({ userRole, student }) {
 
             {/* Center Interactive Icon */}
             <div className="floating-icon" style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-               <div style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', width: '80px', height: '80px', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 15px 30px ${displayColor}70`, transform: 'rotate(-8deg)' }}>
+               <div style={{ background: 'rgba(255,255,255,0.95)', width: '80px', height: '80px', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 20px rgba(0,0,0,0.15)', transform: 'rotate(-8deg)' }}>
                    <TypeIcon size={45} color={displayColor} />
                </div>
             </div>
