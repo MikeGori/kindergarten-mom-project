@@ -251,13 +251,20 @@ export default function ActivityHub({ userRole, student }) {
                       />
                   </div>
                   
-                  <div style={{ paddingTop: '1.5rem', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ paddingTop: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
                      <button 
                         onClick={() => setActiveIframe(null)}
                         className="giant-button"
-                        style={{ background: 'var(--primary-red)', border: 'none', color: 'white', fontSize: '1.3rem', padding: '1rem 3rem', height: 'auto', borderRadius: '30px', display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', maxWidth: '400px' }}
+                        style={{ background: 'var(--primary-red)', border: 'none', color: 'white', fontSize: '1.3rem', padding: '1rem 3rem', height: 'auto', borderRadius: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: '100%', maxWidth: '400px', boxShadow: '0 4px 15px rgba(255,0,0,0.4)' }}
                       >
                         סיימתי, חזרה למרכז הלמידה 🏠
+                      </button>
+                      <button 
+                        onClick={() => { window.open(activeIframe.url, '_blank'); setActiveIframe(null); }}
+                        style={{ background: 'transparent', border: 'none', color: 'var(--primary-blue)', fontSize: '1.1rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
+                        aria-label="פתח בחלון חדש"
+                      >
+                        המשחק חסום או מציג שגיאה? פתחו אותו בחלון חדש במקום 🔗
                       </button>
                   </div>
 
