@@ -8,7 +8,7 @@ import StaffLogin from './components/StaffLogin'; // Keeping this import as it w
 import ActivityManager from './components/ActivityManager';
 import { getSchoolSettings, db } from './lib/firebase'; // Assuming db is exported from firebase.js
 import { onSnapshot, doc } from 'firebase/firestore';
-import { Users, Baby, GraduationCap, Sun, Star, Heart, Music } from 'lucide-react'; // Added GraduationCap and Floating Background Icons
+import { Users, Baby, GraduationCap, Sun, Star, Heart, Music, Sparkles, Cloud, Rocket, Smile } from 'lucide-react'; // Added GraduationCap and Floating Background Icons
 
 export default function App() {
   const [currentView, setCurrentView] = useState('landing');
@@ -114,13 +114,25 @@ export default function App() {
               <div style={{ position: 'absolute', top: '8%', right: '12%', transform: `translate(${mousePos.x * 40}px, ${mousePos.y * 40}px)`, transition: 'transform 0.1s ease-out' }}>
                   <Sun size={140} color="#FFD166" fill="#FFD166" style={{ opacity: 0.9, animation: 'spin 25s linear infinite', filter: 'drop-shadow(0 15px 25px rgba(255,209,102,0.6))' }} />
               </div>
-              <div style={{ position: 'absolute', top: '25%', left: '10%', transform: `translate(${mousePos.x * -50}px, ${mousePos.y * -50}px)`, transition: 'transform 0.1s ease-out' }}>
+              <div style={{ position: 'absolute', top: '15%', left: '20%', transform: `translate(${mousePos.x * -35}px, ${mousePos.y * -35}px)`, transition: 'transform 0.1s ease-out' }}>
+                  <Cloud size={110} color="#ffffff" fill="#ffffff" style={{ opacity: 0.8, animation: 'float 8s ease-in-out infinite 1s', filter: 'drop-shadow(0 15px 25px rgba(255,255,255,0.7))' }} />
+              </div>
+              <div style={{ position: 'absolute', top: '25%', left: '8%', transform: `translate(${mousePos.x * -50}px, ${mousePos.y * -50}px)`, transition: 'transform 0.1s ease-out' }}>
                   <Star size={90} color="#118AB2" fill="#118AB2" style={{ opacity: 0.8, animation: 'float 6s ease-in-out infinite', filter: 'drop-shadow(0 15px 25px rgba(17,138,178,0.5))' }} />
+              </div>
+              <div style={{ position: 'absolute', top: '40%', right: '8%', transform: `translate(${mousePos.x * 25}px, ${mousePos.y * 25}px)`, transition: 'transform 0.1s ease-out' }}>
+                  <Sparkles size={80} color="#06D6A0" fill="#06D6A0" style={{ opacity: 0.8, animation: 'spin 15s linear infinite reverse', filter: 'drop-shadow(0 15px 25px rgba(6,214,160,0.5))' }} />
+              </div>
+              <div style={{ position: 'absolute', bottom: '35%', left: '10%', transform: `translate(${mousePos.x * -45}px, ${mousePos.y * -45}px)`, transition: 'transform 0.1s ease-out' }}>
+                  <Rocket size={100} color="#FF9F1C" fill="#FF9F1C" style={{ opacity: 0.9, animation: 'float 7s ease-in-out infinite 0.5s', transform: 'rotate(45deg)', filter: 'drop-shadow(0 15px 25px rgba(255,159,28,0.5))' }} />
               </div>
               <div style={{ position: 'absolute', bottom: '15%', right: '15%', transform: `translate(${mousePos.x * 60}px, ${mousePos.y * 60}px)`, transition: 'transform 0.1s ease-out' }}>
                   <Heart size={120} color="#EF476F" fill="#EF476F" style={{ opacity: 0.9, animation: 'float 5s ease-in-out infinite 1s', filter: 'drop-shadow(0 15px 25px rgba(239,71,111,0.5))' }} />
               </div>
-              <div style={{ position: 'absolute', bottom: '20%', left: '15%', transform: `translate(${mousePos.x * -70}px, ${mousePos.y * -70}px)`, transition: 'transform 0.1s ease-out' }}>
+              <div style={{ position: 'absolute', bottom: '25%', right: '25%', transform: `translate(${mousePos.x * 30}px, ${mousePos.y * 30}px)`, transition: 'transform 0.1s ease-out' }}>
+                  <Smile size={90} color="#118AB2" fill="#118AB2" style={{ opacity: 0.85, animation: 'float 9s ease-in-out infinite 2s', filter: 'drop-shadow(0 15px 25px rgba(17,138,178,0.5))' }} />
+              </div>
+              <div style={{ position: 'absolute', bottom: '10%', left: '20%', transform: `translate(${mousePos.x * -70}px, ${mousePos.y * -70}px)`, transition: 'transform 0.1s ease-out' }}>
                   <Music size={100} color="#06D6A0" fill="#06D6A0" style={{ opacity: 0.9, animation: 'float 7s ease-in-out infinite 2s', filter: 'drop-shadow(0 15px 25px rgba(6,214,160,0.5))' }} />
               </div>
           </div>
@@ -192,9 +204,9 @@ export default function App() {
   return (
     <div className="app-container" dir="rtl" style={{ minHeight: '100vh', position: 'relative', overflowX: 'hidden' }}>
       {/* Global Vibrant Background Blobs */}
-      <div style={{ position: 'fixed', top: '-10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(255,209,102,0.15) 0%, rgba(255,209,102,0) 70%)', filter: 'blur(40px)', animation: 'float 8s ease-in-out infinite', zIndex: 0, pointerEvents: 'none' }} />
-      <div style={{ position: 'fixed', bottom: '-20%', right: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(17,138,178,0.1) 0%, rgba(17,138,178,0) 70%)', filter: 'blur(60px)', animation: 'float 12s ease-in-out infinite reverse', zIndex: 0, pointerEvents: 'none' }} />
-      <div style={{ position: 'fixed', top: '15%', right: '5%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(239,71,111,0.08) 0%, rgba(239,71,111,0) 70%)', filter: 'blur(50px)', animation: 'float 10s ease-in-out infinite 2s', zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', top: '-10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(255,209,102,0.35) 0%, rgba(255,209,102,0) 70%)', filter: 'blur(40px)', animation: 'float 8s ease-in-out infinite', zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', bottom: '-20%', right: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(17,138,178,0.25) 0%, rgba(17,138,178,0) 70%)', filter: 'blur(60px)', animation: 'float 12s ease-in-out infinite reverse', zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', top: '15%', right: '5%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(239,71,111,0.20) 0%, rgba(239,71,111,0) 70%)', filter: 'blur(50px)', animation: 'float 10s ease-in-out infinite 2s', zIndex: 0, pointerEvents: 'none' }} />
 
       <div style={{ position: 'relative', zIndex: 10, paddingBottom: '2rem' }}>
           {showNavbar && (
