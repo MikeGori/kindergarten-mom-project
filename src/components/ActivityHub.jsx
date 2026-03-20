@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Play, FileText, CheckCircle, Video, ExternalLink, Image as ImageIcon, Gamepad2, Music, Palette, BookOpen, Rocket, Star, Heart, Smile, Sun } from 'lucide-react';
 import '../index.css';
 import { db } from '../lib/firebase';
-import { collection, onSnapshot, query, where, addDoc } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, addDoc, doc, updateDoc } from 'firebase/firestore';
 
 export default function ActivityHub({ userRole, student }) {
   const [activities, setActivities] = useState([]);
@@ -14,7 +14,7 @@ export default function ActivityHub({ userRole, student }) {
   useEffect(() => {
     const q = query(collection(db, 'activities'), where('active', '==', true));
     const unsub = onSnapshot(q, (snap) => {
-      const loadedActivities = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) => {
+      const loadedActivities = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => {
           const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
           const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
           return timeB - timeA;
@@ -27,6 +27,17 @@ export default function ActivityHub({ userRole, student }) {
     });
     return unsub;
   }, []);
+
+  const handleToggleRouting = async (activity, e) => {
+      if (e) e.stopPropagation();
+      try {
+          await updateDoc(doc(db, 'activities', activity.id), {
+              requiresNewTab: !activity.requiresNewTab
+          });
+      } catch (err) {
+          console.error("Failed to toggle activity routing", err);
+      }
+  };
 
   if (loading) return <div style={{ padding: '4rem', textAlign: 'center' }}>טוען פעילויות...</div>;
 
@@ -89,8 +100,18 @@ export default function ActivityHub({ userRole, student }) {
         const displayColor = activity.color || 'var(--primary-red)';
 
         return (
-        <div key={activity.id} className="card animate-pop" style={{ marginBottom: '3rem', background: '#fafafa', border: `3px solid ${displayColor}` }}>
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: displayColor }}>
+        <div key={activity.id} className="card animate-pop" style={{ position: 'relative', marginBottom: '3rem', background: '#fafafa', border: `3px solid ${displayColor}` }}>
+          {userRole === 'teacher' && (
+             <button 
+                onClick={(e) => handleToggleRouting(activity, e)}
+                style={{ position: 'absolute', top: '10px', left: '10px', background: activity.requiresNewTab ? '#ffebee' : '#e8f5e9', color: activity.requiresNewTab ? 'var(--primary-red)' : 'var(--primary-green)', padding: '0.5rem 1rem', borderRadius: '12px', border: 'none', cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-soft)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                title="החלף פתיחה בחלון חדש / לכוד באפליקציה"
+             >
+                {activity.requiresNewTab ? '🔗 נפתח בחלון חדש' : '🏠 לכוד באפליקציה'}
+             </button>
+          )}
+
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: displayColor, marginTop: userRole === 'teacher' ? '2.5rem' : '0' }}>
             <TypeIcon size={32} /> {activity.title}
           </h2>
           <div style={{ width: '100%', height: '300px', background: 'black', borderRadius: '24px', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', boxShadow: `0 10px 30px ${displayColor}40` }}>
@@ -121,8 +142,18 @@ export default function ActivityHub({ userRole, student }) {
           const displayColor = activity.color || 'var(--primary-green)';
 
           return (
-          <div key={activity.id} className="card animate-pop" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', borderTop: `8px solid ${displayColor}` }}>
-            <div style={{ position: 'relative', width: '100%', height: '150px', background: activity.type === 'image' ? '#f3e5f5' : '#fafafa', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <div key={activity.id} className="card animate-pop" style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', borderTop: `8px solid ${displayColor}` }}>
+            {userRole === 'teacher' && activity.type !== 'image' && activity.type !== 'audio' && (
+               <button 
+                  onClick={(e) => handleToggleRouting(activity, e)}
+                  style={{ position: 'absolute', top: '10px', left: '10px', background: activity.requiresNewTab ? '#ffebee' : '#e8f5e9', color: activity.requiresNewTab ? 'var(--primary-red)' : 'var(--primary-green)', padding: '0.4rem 0.8rem', borderRadius: '12px', border: 'none', cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-soft)', fontWeight: 'bold', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  title="החלף פתיחה בחלון חדש / לכוד באפליקציה"
+               >
+                  {activity.requiresNewTab ? '🔗 נפתח בנפרד' : '🏠 לכוד בגן'}
+               </button>
+            )}
+
+            <div style={{ position: 'relative', width: '100%', height: '150px', background: activity.type === 'image' ? '#f3e5f5' : '#fafafa', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginTop: userRole === 'teacher' && activity.type !== 'image' && activity.type !== 'audio' ? '2.5rem' : '0' }}>
                 {(activity.bgImage || activity.type === 'image') ? (
                     <img src={activity.bgImage || activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
