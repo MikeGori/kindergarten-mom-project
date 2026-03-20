@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Video, Edit3, Settings, MessageSquare, CheckCircle, Save, Trash2, GraduationCap, Calendar, X, Smile, Palette, Mic, Image as ImageIcon } from 'lucide-react';
+import { Users, Video, Edit3, Settings, MessageSquare, CheckCircle, Save, Trash2, GraduationCap, Calendar, X, Smile, Palette, Mic, Image as ImageIcon, Cat, Dog, Bird, Fish, Circle, Square, Triangle, Star } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, getDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc } from 'firebase/firestore';
 import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from 'recharts';
 import '../index.css';
+
+const SHAPES = [
+  { id: 'circle', icon: Circle, color: 'var(--primary-red)' },
+  { id: 'square', icon: Square, color: 'var(--primary-blue)' },
+  { id: 'triangle', icon: Triangle, color: 'var(--primary-green)' },
+  { id: 'star', icon: Star, color: 'var(--primary-yellow)' }
+];
+
+const ICONS = { Cat, Dog, Bird, Fish };
 
 export default function TeacherDashboard() {
   const [schoolName, setSchoolName] = useState('');
@@ -20,6 +29,14 @@ export default function TeacherDashboard() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Registration States
+  const [isAddingStudent, setIsAddingStudent] = useState(false);
+  const [regStep, setRegStep] = useState(1);
+  const [regName, setRegName] = useState('');
+  const [regIcon, setRegIcon] = useState('Cat');
+  const [regColor, setRegColor] = useState('var(--primary-blue)');
+  const [regSequence, setRegSequence] = useState([]);
 
   useEffect(() => {
     // Fetch Settings
@@ -101,6 +118,32 @@ export default function TeacherDashboard() {
         alert('הפעילות נוספה בהצלחה!');
     } catch (err) {
         alert('הוספה נכשלה.');
+    }
+  };
+
+  const handleRegisterStudent = async () => {
+    if (!regName || regSequence.length < 2) return;
+    
+    const newStudent = {
+      name: regName,
+      icon: regIcon,
+      color: regColor,
+      secret_sequence: regSequence,
+      createdAt: new Date()
+    };
+
+    try {
+      await addDoc(collection(db, 'students'), newStudent);
+      alert("תלמיד נוסף בהצלחה!");
+      setIsAddingStudent(false);
+      setRegStep(1);
+      setRegName('');
+      setRegIcon('Cat');
+      setRegColor('var(--primary-blue)');
+      setRegSequence([]);
+    } catch (err) {
+      console.error("Registration failed:", err);
+      alert("אופס! משהו השתבש בהוספה.");
     }
   };
 
@@ -347,6 +390,12 @@ export default function TeacherDashboard() {
         >
           <Edit3 size={24} /> יצירת דף עבודה
         </button>
+        <button 
+            onClick={() => setIsAddingStudent(true)}
+            style={{ padding: '1.5rem 2.5rem', borderRadius: '24px', border: 'none', background: 'var(--primary-green)', color: 'white', fontWeight: 700, fontSize: '1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.75rem', boxShadow: 'var(--shadow-soft)' }}
+        >
+          <Users size={24} /> רישום חבר חדש
+        </button>
       </div>
 
       {/* Student Details Modal */}
@@ -440,6 +489,132 @@ export default function TeacherDashboard() {
                       </div>
                   )}
 
+              </div>
+          </div>
+      )}
+
+      {/* Add New Student Modal */}
+      {isAddingStudent && (
+          <div 
+             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+          >
+              <div 
+                 className="card animate-pop" 
+                 style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto', padding: '2rem', position: 'relative', background: 'white', textAlign: 'center' }}
+              >
+                  <button onClick={() => { setIsAddingStudent(false); setRegStep(1); setRegSequence([]); }} style={{ position: 'absolute', top: '1rem', left: '1rem', background: '#ffebee', padding: '0.4rem', borderRadius: '50%', border: 'none', cursor: 'pointer', zIndex: 10 }}>
+                      <X size={32} color="var(--primary-red)" />
+                  </button>
+
+                  {regStep === 1 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', alignItems: 'center', paddingTop: '1rem' }}>
+                      <h2 style={{ fontSize: '2rem', color: 'var(--primary-blue)', margin: 0 }}>רישום תלמיד חדש</h2>
+                      <input 
+                        type="text" 
+                        placeholder="איך קוראים לילד/ה?" 
+                        value={regName}
+                        onChange={(e) => setRegName(e.target.value)}
+                        style={{ padding: '1.5rem', borderRadius: '24px', border: '4px solid var(--primary-blue)', fontSize: '1.5rem', textAlign: 'center', width: '100%', outline: 'none' }}
+                      />
+                      
+                      <div style={{ display: 'flex', gap: '1rem' }}>
+                        {Object.keys(ICONS).map(iconName => (
+                          <button 
+                            key={iconName}
+                            onClick={() => setRegIcon(iconName)}
+                            style={{ padding: '1rem', borderRadius: '16px', border: regIcon === iconName ? '4px solid var(--primary-yellow)' : 'none', background: 'white', cursor: 'pointer' }}
+                          >
+                            {React.createElement(ICONS[iconName], { size: 48, color: 'var(--primary-blue)' })}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '1rem' }}>
+                        {['var(--primary-blue)', 'var(--primary-red)', 'var(--primary-green)', 'var(--primary-yellow)'].map(color => (
+                          <button 
+                            key={color}
+                            onClick={() => setRegColor(color)}
+                            style={{ width: '50px', height: '50px', borderRadius: '50%', background: color, border: regColor === color ? '4px solid #333' : 'none', cursor: 'pointer', boxShadow: 'var(--shadow-soft)' }}
+                          />
+                        ))}
+                      </div>
+
+                      <button 
+                        className="giant-button" 
+                        style={{ background: 'var(--primary-blue)', color: 'white', width: '100%', marginTop: '1rem' }}
+                        onClick={() => setRegStep(2)}
+                        disabled={!regName}
+                      >
+                        המשך להגדרת סיסמה ←
+                      </button>
+                    </div>
+                  )}
+
+                  {regStep === 2 && (
+                    <div style={{ paddingTop: '1rem' }}>
+                      <h2 style={{ fontSize: '2rem', color: 'var(--primary-blue)', margin: 0 }}>קביעת סיסמה מבוססת צורות</h2>
+                      <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>בחרו שתי צורות כשילוב הסודי</p>
+                      
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginBottom: '3rem' }}>
+                        {[0, 1].map((i) => (
+                          <div 
+                            key={i}
+                            onClick={() => i < regSequence.length && setRegSequence(regSequence.slice(0, i))}
+                            style={{ 
+                              width: '90px', 
+                              height: '90px', 
+                              borderRadius: '24px', 
+                              background: 'white', 
+                              border: regSequence[i] ? '4px solid var(--primary-green)' : '4px dashed hsl(122, 39%, 80%)', 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              justifyContent: 'center',
+                              cursor: regSequence[i] ? 'pointer' : 'default'
+                            }}
+                          >
+                            {regSequence[i] && (
+                              (() => {
+                                const ShapeIcon = SHAPES.find(s => s.id === regSequence[i]).icon;
+                                const shapeColor = SHAPES.find(s => s.id === regSequence[i]).color;
+                                return <ShapeIcon size={48} color={shapeColor} />;
+                              })()
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="grid-container" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', maxWidth: '400px', margin: '0 auto' }}>
+                        {SHAPES.map((shape) => (
+                          <button
+                            key={shape.id}
+                            className="giant-button"
+                            style={{ width: '100%', height: '140px', borderRadius: '32px' }}
+                            onClick={() => regSequence.length < 2 && setRegSequence([...regSequence, shape.id])}
+                            disabled={regSequence.length >= 2}
+                          >
+                            <shape.icon size={64} color={shape.color} />
+                          </button>
+                        ))}
+                      </div>
+
+                      {regSequence.length === 2 && (
+                         <button 
+                            className="giant-button" 
+                            style={{ background: 'var(--primary-green)', color: 'white', width: '100%', marginTop: '3rem' }}
+                            onClick={handleRegisterStudent}
+                          >
+                            שמירת תלמיד 🎉
+                          </button>
+                      )}
+                      
+                      <button 
+                        style={{ marginTop: '2rem', padding: '1rem 2rem', fontSize: '1.2rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 'bold' }}
+                        onClick={() => { setRegStep(1); setRegSequence([]); }}
+                      >
+                        ← תכנון מחדש
+                      </button>
+                    </div>
+                  )}
               </div>
           </div>
       )}
