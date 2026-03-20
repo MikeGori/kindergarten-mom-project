@@ -100,34 +100,66 @@ export default function ActivityHub({ userRole, student }) {
         const displayColor = activity.color || 'var(--primary-red)';
 
         return (
-        <div key={activity.id} className="card animate-pop" style={{ position: 'relative', marginBottom: '3rem', background: '#fafafa', border: `3px solid ${displayColor}` }}>
-          {userRole === 'staff' && (
-             <button 
-                onClick={(e) => handleToggleRouting(activity, e)}
-                style={{ position: 'absolute', top: '10px', left: '10px', background: activity.requiresNewTab ? '#ffebee' : '#e8f5e9', color: activity.requiresNewTab ? 'var(--primary-red)' : 'var(--primary-green)', padding: '0.5rem 1rem', borderRadius: '12px', border: 'none', cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-soft)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                title="החלף פתיחה בחלון חדש / לכוד באפליקציה"
-             >
-                {activity.requiresNewTab ? '🔗 נפתח בחלון חדש' : '🏠 לכוד באפליקציה'}
-             </button>
-          )}
+          <div 
+             key={activity.id} 
+             className="card animate-pop" 
+             onClick={() => handleActivityClick(activity)}
+             style={{ 
+                 position: 'relative', 
+                 borderRadius: '32px', 
+                 overflow: 'hidden', 
+                 border: `4px solid ${displayColor}`, 
+                 boxShadow: `0 15px 35px ${displayColor}40`, 
+                 cursor: 'pointer', 
+                 aspectRatio: '16/9', 
+                 display: 'flex', 
+                 flexDirection: 'column', 
+                 justifyContent: 'flex-end', 
+                 background: '#fafafa',
+                 padding: 0,
+                 marginBottom: '3rem'
+             }}
+          >
+            {/* Background Layer */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+               {activity.bgImage ? (
+                   <img src={activity.bgImage} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+               ) : (
+                   <div style={{ width: '100%', height: '100%', background: `radial-gradient(circle at 50% 50%, ${displayColor}30, ${displayColor}10)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                       <Video size={140} color={displayColor} style={{ opacity: 0.2 }} />
+                   </div>
+               )}
+               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 50%)' }} />
+            </div>
 
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: displayColor, marginTop: userRole === 'staff' ? '2.5rem' : '0' }}>
-            <TypeIcon size={32} /> {activity.title}
-          </h2>
-          <div style={{ width: '100%', height: '300px', background: 'black', borderRadius: '24px', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', boxShadow: `0 10px 30px ${displayColor}40` }}>
-            {activity.bgImage && (
-                <img src={activity.bgImage} alt={activity.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
+            {/* Teacher Toggle */}
+            {userRole === 'staff' && (
+               <button 
+                  onClick={(e) => handleToggleRouting(activity, e)}
+                  style={{ position: 'absolute', top: '15px', left: '15px', background: activity.requiresNewTab ? '#ffebee' : '#e8f5e9', color: activity.requiresNewTab ? 'var(--primary-red)' : 'var(--primary-green)', padding: '0.6rem 1.2rem', borderRadius: '16px', border: 'none', cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-soft)', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}
+                  title="החלף פתיחה בחלון חדש / לכוד באפליקציה"
+               >
+                  {activity.requiresNewTab ? '🔗 נפתח בחלון חדש' : '🏠 לכוד באפליקציה'}
+               </button>
             )}
-            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(45deg, ${displayColor}, var(--primary-blue))`, opacity: activity.bgImage ? 0.3 : 0.8 }}></div>
-            <button 
-              className="giant-button" 
-              style={{ zIndex: 10, width: '100px', height: '100px', borderRadius: '50%', background: 'white', border: `4px solid ${displayColor}` }}
-              onClick={() => handleActivityClick(activity)}
-            >
-              <Play size={44} color={displayColor} style={{ marginLeft: '6px' }} />
-            </button>
+
+            {/* Floating Play Button */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+               <div style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(10px)', width: '90px', height: '90px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 15px 40px ${displayColor}80` }}>
+                   <Play size={45} fill={displayColor} color={displayColor} style={{ marginLeft: '6px' }} />
+               </div>
+            </div>
+
+            {/* Title Glass Bar */}
+            <div style={{ position: 'relative', zIndex: 2, padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+               <h2 style={{ margin: 0, fontSize: '2rem', fontWeight: 900, color: 'white', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+                   {activity.title}
+               </h2>
+               <div style={{ background: 'rgba(255,255,255,0.25)', padding: '0.6rem', borderRadius: '16px', backdropFilter: 'blur(8px)' }}>
+                   <TypeIcon size={32} color="white" />
+               </div>
+            </div>
           </div>
-        </div>
         );
       })}
 
@@ -135,61 +167,68 @@ export default function ActivityHub({ userRole, student }) {
         <FileText size={32} color="var(--primary-blue)" /> הפעילויות של היום
       </h2>
 
-      <div className="grid-container" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+      <div className="grid-container" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
         {activities.filter(a => a.type !== 'video').map(activity => {
           const iconMap = { Gamepad2, Music, Palette, BookOpen, Rocket, Star, Heart, Smile, Sun, Video, ImageIcon, FileText, Link: ExternalLink };
           const TypeIcon = iconMap[activity.icon] || iconMap[activity.type === 'image' ? 'ImageIcon' : activity.type === 'pdf' ? 'FileText' : 'Link'] || Star;
           const displayColor = activity.color || 'var(--primary-green)';
 
           return (
-          <div key={activity.id} className="card animate-pop" style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', borderTop: `8px solid ${displayColor}` }}>
+          <div 
+             key={activity.id} 
+             className="card animate-pop" 
+             onClick={() => handleActivityClick(activity)}
+             style={{ 
+                 position: 'relative', 
+                 borderRadius: '32px', 
+                 overflow: 'hidden', 
+                 border: `4px solid ${displayColor}`, 
+                 boxShadow: `0 15px 30px ${displayColor}30`, 
+                 cursor: 'pointer', 
+                 aspectRatio: '1/1', 
+                 display: 'flex', 
+                 flexDirection: 'column', 
+                 justifyContent: 'flex-end', 
+                 background: '#fafafa',
+                 padding: 0
+             }}
+          >
+            {/* Background Layer */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+               {(activity.bgImage || activity.type === 'image') ? (
+                   <img src={activity.bgImage || activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+               ) : (
+                   <div style={{ width: '100%', height: '100%', background: `radial-gradient(circle at 50% 50%, ${displayColor}30, ${displayColor}10)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                       <TypeIcon size={120} color={displayColor} style={{ opacity: 0.4 }} />
+                   </div>
+               )}
+               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 60%)' }} />
+            </div>
+
+            {/* Teacher Toggle */}
             {userRole === 'staff' && activity.type !== 'image' && activity.type !== 'audio' && (
                <button 
                   onClick={(e) => handleToggleRouting(activity, e)}
-                  style={{ position: 'absolute', top: '10px', left: '10px', background: activity.requiresNewTab ? '#ffebee' : '#e8f5e9', color: activity.requiresNewTab ? 'var(--primary-red)' : 'var(--primary-green)', padding: '0.4rem 0.8rem', borderRadius: '12px', border: 'none', cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-soft)', fontWeight: 'bold', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  style={{ position: 'absolute', top: '12px', left: '12px', background: activity.requiresNewTab ? '#ffebee' : '#e8f5e9', color: activity.requiresNewTab ? 'var(--primary-red)' : 'var(--primary-green)', padding: '0.4rem 0.8rem', borderRadius: '12px', border: 'none', cursor: 'pointer', zIndex: 10, boxShadow: 'var(--shadow-soft)', fontWeight: '900', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                   title="החלף פתיחה בחלון חדש / לכוד באפליקציה"
                >
-                  {activity.requiresNewTab ? '🔗 נפתח בנפרד' : '🏠 לכוד בגן'}
+                  {activity.requiresNewTab ? '🔗 חלון נפרד' : '🏠 לכוד בגן'}
                </button>
             )}
 
-            <div style={{ position: 'relative', width: '100%', height: '150px', background: activity.type === 'image' ? '#f3e5f5' : '#fafafa', borderRadius: '16px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginTop: userRole === 'staff' && activity.type !== 'image' && activity.type !== 'audio' ? '2.5rem' : '0' }}>
-                {(activity.bgImage || activity.type === 'image') ? (
-                    <img src={activity.bgImage || activity.url} alt={activity.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                    <TypeIcon size={72} color={displayColor} />
-                )}
-                
-                {(activity.bgImage || activity.type === 'image') && (
-                    <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'white', padding: '6px', borderRadius: '50%', boxShadow: '0 4px 8px rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <TypeIcon size={24} color={displayColor} />
-                    </div>
-                )}
+            {/* Center Interactive Icon */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+               <div style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', width: '80px', height: '80px', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 15px 30px ${displayColor}70`, transform: 'rotate(-8deg)' }}>
+                   <TypeIcon size={45} color={displayColor} />
+               </div>
             </div>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0 }}>{activity.title}</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', marginTop: '0.5rem', fontWeight: 600 }}>{activity.type === 'image' ? 'תמונה מהמורה' : 'לחצו כדי להתחיל'}</p>
-            {activity.type === 'image' ? (
-                <button 
-                  onClick={() => handleActivityClick(activity)}
-                  style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-purple)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 8px 20px hsla(262, 70%, 68%, 0.3)' }}
-                >
-                  הגדל תמונה <ImageIcon size={20} />
-                </button>
-            ) : activity.type === 'audio' ? (
-                <button 
-                  onClick={() => handleActivityClick(activity)}
-                  style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: 'var(--primary-purple)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 8px 20px hsla(262, 70%, 68%, 0.3)' }}
-                >
-                  בואו נשיר <Music size={20} />
-                </button>
-            ) : (
-                <button 
-                    onClick={() => handleActivityClick(activity)}
-                    style={{ padding: '1rem 2rem', borderRadius: '32px', border: 'none', background: displayColor, color: 'white', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: `0 8px 20px ${displayColor}66` }}
-                >
-                  בואו נשחק <ExternalLink size={20} />
-                </button>
-            )}
+
+            {/* Glass Title Bar */}
+            <div style={{ position: 'relative', zIndex: 2, padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}>
+               <h3 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 900, color: 'white', textShadow: '0 2px 8px rgba(0,0,0,0.8)', textAlign: 'center', width: '100%', lineHeight: 1.2 }}>
+                   {activity.title}
+               </h3>
+            </div>
           </div>
           );
         })}
